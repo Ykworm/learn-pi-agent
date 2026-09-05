@@ -1,0 +1,18 @@
+{
+  "name": "reconstruct-pi-agent",
+  "private": true,
+  "version": "0.0.0",
+  "description": "从 0 手写的原始 pi-agent。第 0 片只有脚手架，第 1 片才开始写 loop。",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "start": "echo \"第 0 片：还没有 agent 入口。学会第 0 片后再写第 1 片 loop。\""
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}
