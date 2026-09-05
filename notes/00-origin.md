@@ -6,6 +6,7 @@
 
 - 动机：[Mario 的原文](https://mariozechner.at/posts/2025-11-30-pi-coding-agent/)（2025-11-30，比首个提交晚约三个月，但问题陈述仍适用）
 - 标本：[vendor/pi-mono-a74c5da/packages/agent](../vendor/pi-mono-a74c5da/packages/agent)
+- 一个 turn 如何调工具：[00-completions-turn.md](00-completions-turn.md)
 
 ## 第 1 节：作者在解决什么
 
@@ -95,5 +96,7 @@ cli.ts
 1. 为什么不直接学今天的 `pi-ai` + `pi-agent-core` + `pi-coding-agent`？
 2. 第一版三个包里，哪个才是 agent 的骨架？哪些文件我们故意先不碰？
 3. 若明天从空白目录开工，你的第一刀会写什么？（提示：还不是事件、不是 JSONL。）
+
+Chat Completions 的 role、谁发第 2 次 HTTP、一个 turn 里多次调工具：见 [00-completions-turn.md](00-completions-turn.md)。
 
 答得出来，第 0 片就结束了。卡住就问。不要自己先写 loop。
