@@ -6,3 +6,4 @@ dist/
 .env
 reconstruct/node_modules/
 reconstruct/dist/
+reconstruct/config.local.json

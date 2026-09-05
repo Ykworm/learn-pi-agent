@@ -23,25 +23,34 @@ Agent 还不是 CLI、不是 session、不是 TUI。它是：
 | [`reconstruct/src/tools/run.ts`](../reconstruct/src/tools/run.ts) | 按名字分发 |
 | [`reconstruct/src/agent/loop.ts`](../reconstruct/src/agent/loop.ts) | `for (;;)` 里发 HTTP、执行工具 |
 | [`reconstruct/src/agent/agent.ts`](../reconstruct/src/agent/agent.ts) | 持有 `messages`，`ask()` 追加一条 user 再跑 loop |
-| [`reconstruct/src/cli.ts`](../reconstruct/src/cli.ts) | 读 `OPENAI_API_KEY` 和命令行上那一句 |
+| [`reconstruct/src/cli.ts`](../reconstruct/src/cli.ts) | 读配置文件和命令行上那一句 |
+| [`reconstruct/src/config/load.ts`](../reconstruct/src/config/load.ts) | 读 `config.json` + 可选 `config.local.json` |
+| [`reconstruct/config.json`](../reconstruct/config.json) | DeepSeek 的 `baseURL` / `model` / system prompt（无密钥） |
 
 loop 不 `console.log`。终答由 CLI 打印。第 2 片才把「发生了什么」广播给听众。
 
 ## 第 3 节：怎么跑
 
-在 `reconstruct/` 下：
+DeepSeek 走 OpenAI-compatible 的 Chat Completions，所以 loop 不用改，只换配置。已提交的 [`config.json`](../reconstruct/config.json) 指向 `https://api.deepseek.com` 和 `deepseek-chat`。
+
+密钥不要进 git。任选一种：
 
 ```bash
-export OPENAI_API_KEY=sk-...
-# 可选：OPENAI_BASE_URL=https://api.openai.com/v1
-# 可选：OPENAI_MODEL=gpt-4o-mini
+cd reconstruct
+cp config.local.example.json config.local.json
+# 编辑 config.local.json，把 apiKey 换成你的 DeepSeek 密钥
+```
 
+或设置环境变量 `DEEPSEEK_API_KEY`（名字由 config 里的 `apiKeyEnv` 指定）。
+
+`npx` 是 npm 自带的「跑某个包里的命令」：优先用当前项目 `node_modules/.bin` 里的可执行文件，没有才临时下载。`npx tsx src/cli.ts "..."` 等于用本仓库装的 `tsx` 直接跑 TypeScript，不必全局安装 `tsx`，也不必先 `tsc`。
+
+```bash
+cd reconstruct
 npx tsx src/cli.ts "请用 echo 工具重复：hello"
 ```
 
-兼容任意 OpenAI-compatible 端点：换 `OPENAI_BASE_URL` 即可。
-
-Cursor 里：打开 `reconstruct/src/agent/loop.ts` 的 `for (;;)` 打断点，F5 选 **Debug reconstruct CLI**（已带上一句 echo 示例）。
+Cursor 里：打开 `reconstruct/src/agent/loop.ts` 的 `for (;;)` 打断点，F5 选 **Debug reconstruct CLI**。
 
 ## 第 4 节：看代码时盯这三行
 

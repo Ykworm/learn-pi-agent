@@ -1,0 +1,6 @@
+{
+  "baseURL": "https://api.deepseek.com",
+  "model": "deepseek-chat",
+  "apiKeyEnv": "DEEPSEEK_API_KEY",
+  "systemPrompt": "你是一个会使用工具的助手。需要复述或确认用户给出的文字时，必须调用 echo 工具，不要自己编一句替代。工具返回之后，再用简短中文说明你做了什么。"
+}

@@ -1,11 +1,13 @@
 # reconstruct
 
-我们假装自己是作者、从 0 搭起来的 pi-agent。第 1 片已经有 Completions loop 和一个 `echo` 工具。
+第 1 片：Completions loop + `echo`，默认走 DeepSeek（OpenAI-compatible）。
 
 ```bash
 cd reconstruct
-export OPENAI_API_KEY=sk-...
+cp config.local.example.json config.local.json
+# 填入 apiKey
+
 npx tsx src/cli.ts "请用 echo 工具重复：hello"
 ```
 
-笔记：[notes/01-loop.md](../notes/01-loop.md)。
+`npx` 用的是本目录 `node_modules` 里的 `tsx`，不用全局安装。配置说明见 [notes/01-loop.md](../notes/01-loop.md) 第 3 节。
