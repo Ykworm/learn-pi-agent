@@ -30,7 +30,7 @@
       "request": "launch",
       "name": "Debug reconstruct CLI",
       "runtimeExecutable": "${workspaceFolder}/reconstruct/node_modules/.bin/tsx",
-      "args": ["src/cli.ts"],
+      "args": ["src/cli.ts", "请用 echo 工具重复：hello"],
       "cwd": "${workspaceFolder}/reconstruct",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",

@@ -6,17 +6,15 @@
 
 ## 当前进度
 
-**第 0 片：为什么造。** 已 clone 对照仓、写笔记、搭空脚手架。还没有 agent 代码。
-
-学会第 0 片之后，再说「下一片」，才会写 Chat Completions 的 loop。
+**第 1 片：Chat Completions loop。** 笔记见 [notes/01-loop.md](notes/01-loop.md)。`reconstruct/` 里有 `ask()` + `echo` 工具，还没有事件总线。
 
 ## 目录
 
 | 路径 | 作用 |
 |------|------|
 | [`vendor/`](vendor/README.md) | 冻结的原文快照，只读 |
-| [`notes/`](notes/00-origin.md) | 推演笔记。[为什么造](notes/00-origin.md)、[一个 turn 如何调工具](notes/00-completions-turn.md) |
-| [`reconstruct/`](reconstruct/README.md) | 我们手写的实现（第 0 片是空的） |
+| [`notes/`](notes/00-origin.md) | 推演笔记。[为什么造](notes/00-origin.md)、[一个 turn](notes/00-completions-turn.md)、[第 1 片 loop](notes/01-loop.md) |
+| [`reconstruct/`](reconstruct/README.md) | 手写实现。第 1 片：loop + `echo` |
 
 本阶段只读 `vendor/pi-mono-a74c5da/packages/agent/`。不读 TUI，不读 pods。
 
@@ -62,8 +60,8 @@ git checkout -b experiment/slice-00 slice-00
 
 | 片 | 内容 | 状态 |
 |----|------|------|
-| 0 | 为什么造、首版目录 | 进行中（本片无代码） |
-| 1 | Chat Completions + agent loop | 未开始 |
+| 0 | 为什么造、首版目录 | 结束（无 agent 代码） |
+| 1 | Chat Completions + agent loop | 进行中 |
 | 2 | 事件总线（全量 fan-out） | 未开始 |
 | 3 | 工具：`read` / `list` / `bash`，再 `glob` / `rg` | 未开始 |
 | 4 | `AbortSignal` 中断 | 未开始 |

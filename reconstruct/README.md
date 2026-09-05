@@ -1,7 +1,11 @@
 # reconstruct
 
-我们假装自己是作者、从 0 搭起来的 pi-agent。
+我们假装自己是作者、从 0 搭起来的 pi-agent。第 1 片已经有 Completions loop 和一个 `echo` 工具。
 
-第 0 片故意不写 `src/agent.ts`。这里只有 TypeScript 脚手架，证明「仓库能装依赖」，还没有运行时。
+```bash
+cd reconstruct
+export OPENAI_API_KEY=sk-...
+npx tsx src/cli.ts "请用 echo 工具重复：hello"
+```
 
-从第 1 片起，代码按职责拆文件，每个导出符号写两句中文注释：为什么存在、功能作用。不要提前建空的 `agent/`、`events/`、`tools/` 目录。
+笔记：[notes/01-loop.md](../notes/01-loop.md)。
