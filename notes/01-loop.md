@@ -31,7 +31,7 @@ loop 不 `console.log`。终答由 CLI 打印。第 2 片才把「发生了什�
 
 ## 第 3 节：怎么跑
 
-DeepSeek 走 OpenAI-compatible 的 Chat Completions，所以 loop 不用改，只换配置。已提交的 [`config.json`](../reconstruct/config.json) 指向 `https://api.deepseek.com` 和 `deepseek-chat`。
+DeepSeek 走 OpenAI-compatible 的 Chat Completions，所以 loop 不用改，只换配置。已提交的 [`config.json`](../reconstruct/config.json) 指向 `https://api.deepseek.com` 和 `deepseek-v4-flash`。
 
 密钥不要进 git。任选一种：
 
