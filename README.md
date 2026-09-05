@@ -15,7 +15,7 @@
 | 路径 | 作用 |
 |------|------|
 | [`vendor/`](vendor/README.md) | 冻结的原文快照，只读 |
-| [`notes/`](notes/00-origin.md) | 每片一篇中文推演笔记 |
+| [`notes/`](notes/00-origin.md) | 推演笔记。[为什么造](notes/00-origin.md)、[一个 turn 如何调工具](notes/00-completions-turn.md) |
 | [`reconstruct/`](reconstruct/README.md) | 我们手写的实现（第 0 片是空的） |
 
 本阶段只读 `vendor/pi-mono-a74c5da/packages/agent/`。不读 TUI，不读 pods。
