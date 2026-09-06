@@ -103,4 +103,8 @@ assistant  loop 在对照仓 agent.ts 的 callModelChatCompletionsApi；
 
 原始 `pi-agent`（提交 `a74c5da`）**不会**读仓库里的 `AGENTS.md`。system 只有 `--system-prompt`。
 
-Cursor、后来的 pi coding agent 往往会把 `AGENTS.md` 一类项目文件注入上下文；那是另一代产品。我们重建时第 1 片也不自动读它。要让模型看见项目规矩：写进 `--system-prompt`，或让模型自己 `read` 那个文件。
+Cursor、后来的 pi coding agent 往往会把 `AGENTS.md` 一类项目文件注入上下文；那是另一代产品。我们重建的 **agent 运行时第 1 片也不读它**。
+
+本学习仓库根目录的 [`AGENTS.md`](../../AGENTS.md) 是给写代码的人 / 助手看的（怎么拆文件、TS 与 Go 一起改），**不会**自动塞进模型的 system prompt。
+
+第 1 片把这个 turn 写成代码：TypeScript [01-loop.md](01-loop.md)；Go [../go/01-loop.md](../go/01-loop.md)。

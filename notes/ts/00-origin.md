@@ -5,7 +5,7 @@
 对照阅读：
 
 - 动机：[Mario 的原文](https://mariozechner.at/posts/2025-11-30-pi-coding-agent/)（2025-11-30，比首个提交晚约三个月，但问题陈述仍适用）
-- 标本：[vendor/pi-mono-a74c5da/packages/agent](../vendor/pi-mono-a74c5da/packages/agent)
+- 标本：[vendor/pi-mono-a74c5da/packages/agent](../../vendor/pi-mono-a74c5da/packages/agent)
 - 一个 turn 如何调工具：[00-completions-turn.md](00-completions-turn.md)
 
 ## 第 1 节：作者在解决什么
@@ -59,7 +59,7 @@ cli.ts
   --continue 时：读 jsonl -> setEvents -> 再变成 messages[]
 ```
 
-作者真正先要站住的，是中间那条 loop，不是 TUI。第 1 片我们只手写 loop。
+作者真正先要站住的，是中间那条 loop，不是 TUI。第 1 片 TypeScript：[01-loop.md](01-loop.md)；Go：[../go/01-loop.md](../go/01-loop.md)。
 
 ## 第 3 节：若我们就是作者，刀序会是什么样
 
@@ -79,7 +79,7 @@ cli.ts
 
 **Chat Completions。** `POST /v1/chat/completions`。请求是一组带 `role` 的消息。模型回文本，或回 `tool_calls`。Agent = 有工具就执行，把结果塞回 `messages`，再请求，直到只说话。
 
-**emit。** 循环里只调用 `receiver.on(event)`，自己不打印、不写盘。所有听众都收到全部 type（全量 fan-out）。没有「type → 组件」总路由表。Console 在自己的 `on()` 里 `switch`；JSON 和 session 通常全收。像进程内 pub/sub，不是带 broker 的 MQ。
+**emit。** 循环里只调用 `receiver.on(event)`，自己不打印、不写盘。所有听众都收到全部 type（全量 fan-out）。没有「type → 组件」总路由表。Console 在自己的 `on()` 里 `switch`；JSON 和 session 通常全收。像进程内 pub/sub，不是带 broker 的 MQ。第 2 片代码：[02-events.md](02-events.md)。
 
 **AbortSignal。** `AbortController.abort()` 发出取消。HTTP、bash、loop 都看同一根 `signal`。没有它，Escape 停不了正在跑的模型和子进程。
 

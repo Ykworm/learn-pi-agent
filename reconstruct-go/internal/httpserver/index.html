@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>reconstruct-go ask</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 2rem auto; padding: 0 1rem; }
+    textarea { width: 100%; min-height: 6rem; }
+    pre { white-space: pre-wrap; background: #f4f4f4; padding: 0.75rem; }
+    button { margin-top: 0.5rem; }
+    h2 { font-size: 1rem; margin: 1.25rem 0 0.4rem; }
+  </style>
+</head>
+<body>
+  <h1>一句提问</h1>
+  <p>对应 TypeScript 的 CLI。提交后走 <code>POST /ask</code>。网页把听众换成收集器，turn 结束后一次返回事件；不是边跑边推送。</p>
+  <textarea id="msg">请用 echo 工具重复：hello</textarea>
+  <div>
+    <button type="button" id="send">发送</button>
+  </div>
+  <h2>终答</h2>
+  <pre id="text"></pre>
+  <h2>事件</h2>
+  <pre id="events"></pre>
+  <script>
+    document.getElementById("send").onclick = async () => {
+      const textEl = document.getElementById("text");
+      const eventsEl = document.getElementById("events");
+      textEl.textContent = "…";
+      eventsEl.textContent = "";
+      try {
+        const res = await fetch("/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: document.getElementById("msg").value }),
+        });
+        const data = await res.json();
+        textEl.textContent = data.text || data.error || "";
+        eventsEl.textContent = JSON.stringify(data.events || [], null, 2);
+      } catch (err) {
+        textEl.textContent = String(err);
+      }
+    };
+  </script>
+</body>
+</html>

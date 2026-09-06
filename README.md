@@ -4,19 +4,22 @@
 
 对照原文：[badlogic/pi-mono@a74c5da](https://github.com/badlogic/pi-mono/commit/a74c5da112c29466f182a03108337a488c785d76)（2025-08-09，当时版本号 0.5.0）。作者后来写的动机见 [What I learned building an opinionated and minimal coding agent](https://mariozechner.at/posts/2025-11-30-pi-coding-agent/)。
 
+写代码前请读根目录 [`AGENTS.md`](AGENTS.md)：TS 与 Go 同一切片一起维护，以及注释 / 拆文件要求。
+
 ## 当前进度
 
-**第 0 片：为什么造。** 已 clone 对照仓、写笔记、搭空脚手架。还没有 agent 代码。
-
-学会第 0 片之后，再说「下一片」，才会写 Chat Completions 的 loop。
+**第 2 片：事件总线。** TypeScript：[notes/ts/02-events.md](notes/ts/02-events.md)；Go：[notes/go/02-events.md](notes/go/02-events.md)。
 
 ## 目录
 
 | 路径 | 作用 |
 |------|------|
 | [`vendor/`](vendor/README.md) | 冻结的原文快照，只读 |
-| [`notes/`](notes/00-origin.md) | 推演笔记。[为什么造](notes/00-origin.md)、[一个 turn 如何调工具](notes/00-completions-turn.md) |
-| [`reconstruct/`](reconstruct/README.md) | 我们手写的实现（第 0 片是空的） |
+| [`AGENTS.md`](AGENTS.md) | 给写代码的人：双端对齐、注释、当前切片范围 |
+| [`notes/ts/`](notes/ts/README.md) | TypeScript 笔记（含第 0 片概念） |
+| [`notes/go/`](notes/go/README.md) | Go 笔记（实现差异、Gin、断点） |
+| [`reconstruct/`](reconstruct/README.md) | TypeScript：loop + `echo` + 事件 + CLI |
+| [`reconstruct-go/`](reconstruct-go/README.md) | Go：CLI + 可选 Gin 网页（可看事件列表） |
 
 本阶段只读 `vendor/pi-mono-a74c5da/packages/agent/`。不读 TUI，不读 pods。
 
@@ -62,9 +65,9 @@ git checkout -b experiment/slice-00 slice-00
 
 | 片 | 内容 | 状态 |
 |----|------|------|
-| 0 | 为什么造、首版目录 | 进行中（本片无代码） |
-| 1 | Chat Completions + agent loop | 未开始 |
-| 2 | 事件总线（全量 fan-out） | 未开始 |
+| 0 | 为什么造、首版目录 | 结束（无 agent 代码） |
+| 1 | Chat Completions + agent loop | 结束 |
+| 2 | 事件总线（全量 fan-out） | 进行中 |
 | 3 | 工具：`read` / `list` / `bash`，再 `glob` / `rg` | 未开始 |
 | 4 | `AbortSignal` 中断 | 未开始 |
 | 5 | JSONL session，事件还原成 messages | 未开始 |
