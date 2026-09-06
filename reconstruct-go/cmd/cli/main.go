@@ -27,6 +27,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	// 打印是听众的事。这里只把 Console 挂上；loop 仍然不知道 stdout。
 	if err := agent.New(cfg, render.Console{}).Ask(context.Background(), userText); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

@@ -22,6 +22,8 @@ type askBody struct {
 	Message string `json:"message"`
 }
 
+// eventCollector 为什么存在：网页不能在 loop 里直接写浏览器；POST /ask 仍是一次请求一次响应。
+// 功能作用：第二个听众。把事件攒进切片，等 turn 结束随 JSON 返回。和 Console 同时挂上，就是数组 fan-out。
 type eventCollector struct {
 	Events []events.Event `json:"events"`
 }
@@ -30,6 +32,8 @@ func (c *eventCollector) On(event events.Event) {
 	c.Events = append(c.Events, event)
 }
 
+// lastAssistantText 为什么存在：调试页仍想单独显示终答；终答已经在事件流里，不要再让 Ask 返回字符串。
+// 功能作用：从后往前也能用「最后一条 assistant_message」；一个 turn 通常只有一条。
 func lastAssistantText(evs []events.Event) string {
 	text := ""
 	for _, event := range evs {
@@ -60,6 +64,7 @@ func New(cfg config.AppConfig) *gin.Engine {
 			return
 		}
 		col := &eventCollector{}
+		// 两个听众：收集器给 HTTP 响应，Console 打到跑 server 的那个终端。loop 不用改。
 		err := agent.New(cfg, col, render.Console{}).Ask(c.Request.Context(), body.Message)
 		if err != nil {
 			c.JSON(http.StatusBadGateway, gin.H{

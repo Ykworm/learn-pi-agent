@@ -14,6 +14,7 @@ function main(): Promise<void> {
 	}
 
 	const config = loadAppConfig();
+	// 打印是听众的事。这里只把 ConsoleRenderer 挂上；loop 仍然不知道 stdout。
 	const agent = new Agent(
 		{
 			apiKey: config.apiKey,

@@ -2,7 +2,6 @@ package agent
 
 // 为什么存在：Agent 的全部运行时就是「调 Completions → 有 tool_calls 就执行再调」；缺了这层就只是单次聊天。
 // 功能作用：在同一个 turn 里循环 POST Chat Completions，直到模型不再带 tool_calls。发生了什么只 Emit，不打印。
-// 第 2 次及以后发给 DeepSeek 的请求都由这个 for 发出。assistant_start 只在进入循环前广播一次，不是每次 POST。
 
 import (
 	"context"
@@ -14,7 +13,10 @@ import (
 	"github.com/Ykworm/learn-pi-agent/reconstruct-go/internal/tools"
 )
 
+// runCompletionsTurn 为什么存在：一个 turn 里可能多次 HTTP；发请求、执行工具、广播事件都在这里，Ask 不管。
+// 功能作用：循环直到没有 tool_calls。Go 切片传的是拷贝，所以还要把更新后的 messages 返回给 Ask。
 func runCompletionsTurn(ctx context.Context, client openai.Client, model string, messages []openai.ChatCompletionMessageParamUnion, receivers []events.Receiver) ([]openai.ChatCompletionMessageParamUnion, error) {
+	// 每个 turn 一次，不是每次 POST。
 	events.Emit(receivers, events.AssistantStart())
 
 	for {
@@ -47,10 +49,12 @@ func runCompletionsTurn(ctx context.Context, client openai.Client, model string,
 
 		msg := resp.Choices[0].Message
 		if len(msg.ToolCalls) > 0 {
+			// 带 tool_calls 的 assistant 必须先入 messages，模型下一轮才知道自己请过哪些工具。
 			messages = append(messages, msg.ToParam())
 			for _, call := range msg.ToolCalls {
 				switch variant := call.AsAny().(type) {
 				case openai.ChatCompletionMessageFunctionToolCall:
+					// 先广播再执行：终端能看见「正在调」，而不是等工具跑完才出字。
 					events.Emit(receivers, events.ToolCall(variant.ID, variant.Function.Name, variant.Function.Arguments))
 					result := tools.Run(variant.Function.Name, variant.Function.Arguments)
 					events.Emit(receivers, events.ToolResult(variant.ID, result, false))

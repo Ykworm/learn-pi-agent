@@ -15,12 +15,15 @@ import (
 )
 
 type Agent struct {
-	client    openai.Client
-	model     string
-	messages  []openai.ChatCompletionMessageParamUnion
+	client   openai.Client
+	model    string
+	messages []openai.ChatCompletionMessageParamUnion
+	// receivers 是全量 fan-out 的听众表。loop 不读内容，只把它传给 events.Emit。
 	receivers []events.Receiver
 }
 
+// New 为什么存在：听众是构造时挂上的，不是 loop 里 fmt.Println。
+// 功能作用：可变参数就是 receivers[]。CLI 传 Console；Gin 传收集器再加一个 Console。
 func New(cfg config.AppConfig, receivers ...events.Receiver) *Agent {
 	return &Agent{
 		client: openai.NewClient(
@@ -35,6 +38,8 @@ func New(cfg config.AppConfig, receivers ...events.Receiver) *Agent {
 	}
 }
 
+// Ask 为什么存在：人的一句必须同时进两本账：事件给人看，messages 给模型看。
+// 功能作用：先 user_message，再 append user，再跑 loop。返回 error，终答是 assistant_message 事件。
 func (a *Agent) Ask(ctx context.Context, userText string) error {
 	events.Emit(a.receivers, events.UserMessage(userText))
 	a.messages = append(a.messages, openai.UserMessage(userText))

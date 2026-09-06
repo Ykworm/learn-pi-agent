@@ -12,6 +12,8 @@ import (
 
 type Console struct{}
 
+// On 为什么存在：fan-out 把每条事件都送来；这里才决定人眼看什么。
+// 功能作用：按 type 打印。[user] / [assistant] / [tool] 是给人看的标签，不是 API 的 role。
 func (Console) On(event events.Event) {
 	switch event.Type {
 	case events.TypeUserMessage:
@@ -33,5 +35,6 @@ func (Console) On(event events.Event) {
 		fmt.Println(event.Text)
 		fmt.Println()
 	case events.TypeTokenUsage:
+		// 收到了但不印。第 5 片写 jsonl 的听众会全收，包括这一条。
 	}
 }

@@ -5,6 +5,10 @@
 import type { AgentEvent, AgentEventReceiver } from "../events.js";
 
 export class ConsoleRenderer implements AgentEventReceiver {
+	/**
+	 * 为什么存在：fan-out 把每条事件都送来；这里才决定人眼看什么。
+	 * 功能作用：按 type 打印。[user] / [assistant] / [tool] 是给人看的标签，不是 API 的 role。
+	 */
 	async on(event: AgentEvent): Promise<void> {
 		switch (event.type) {
 			case "user_message":
@@ -31,6 +35,7 @@ export class ConsoleRenderer implements AgentEventReceiver {
 				console.log();
 				break;
 			case "token_usage":
+				// 收到了但不印。第 5 片写 jsonl 的听众会全收，包括这一条。
 				break;
 		}
 	}
