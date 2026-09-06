@@ -7,3 +7,4 @@ dist/
 reconstruct/node_modules/
 reconstruct/dist/
 reconstruct/config.local.json
+reconstruct-go/config.local.json

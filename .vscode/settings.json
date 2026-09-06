@@ -1,0 +1,6 @@
+{
+  "go.goroot": "/Users/yuweikang/sdk/go1.27.0",
+  "go.alternateTools": {
+    "dlv": "/Users/yuweikang/go/bin/dlv"
+  }
+}
