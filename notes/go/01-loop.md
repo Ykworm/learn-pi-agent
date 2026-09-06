@@ -38,9 +38,12 @@ go run ./cmd/server
 
 **问一句就停：** F5 → **Debug reconstruct-go CLI**，断点打在 [`loop.go`](../../reconstruct-go/internal/agent/loop.go)。
 
-若调试器显示 `unreadable` / `protocol error E08`：那是旧 Delve（例如 1.23）硬啃 Go 1.27 的内存。本机已把 `dlv` 装到 `~/go/bin/dlv`（1.27.1）。Cursor 工作区已指定这份二进制。停掉当前调试会话后再 F5，**不要**另开 `go run`。
+若变量是 `unreadable` / `protocol error E08`（`could not read string at 0x18`）：
 
-若 `go env GOROOT` 仍是 `/usr/local/go`（1.23.3 的标准库）而 `go version` 是 1.27：shell 里 `export GOROOT=/usr/local/go` 会把工具链拧成两截。调试和 `go install` 前先 `unset GOROOT`。
+1. **不要**用 `--check-go-version=false`。旧 Delve 能启动，但读 Go 1.27 的字符串就会 E08。本机要用 `~/go/bin/dlv`（1.27.1，用 1.27 SDK 装的）。
+2. Cursor **用户设置**里若有 `"go.goroot": "/usr/local/go"`（那是 1.23.3），会和 1.27 编译器拧在一起。本仓库 [`.vscode/settings.json`](../../.vscode/settings.json) 已钉死 1.27 的 `go` 和 `dlv`。改完后：**停掉调试会话 → Command Palette「Reload Window」→ 再 F5**。
+3. 先看 `Ask` 里的 `userText`、loop 里的 `model`。HTTP 返回之后再展开 `openai-go` 的 union / 接口字段，编译器可能已经把槽位挪走，看起来也像 E08。
+4. 不要同时 `go run` 和 F5。
 
 **跟着 HTTP 走：** F5 → **Debug reconstruct-go server**，等 `listening`，再用浏览器打开 `/` 点发送（不要再用 curl）。只 F5 不停在 `for` 上是正常的，要等一次提问。不要同时 `go run ./cmd/server` 和 F5，端口会冲突。
 

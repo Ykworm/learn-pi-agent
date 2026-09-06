@@ -41,20 +41,32 @@
       "name": "Debug reconstruct-go server",
       "type": "go",
       "request": "launch",
-      "mode": "auto",
+      "mode": "debug",
+      "debugAdapter": "dlv-dap",
       "program": "${workspaceFolder}/reconstruct-go/cmd/server",
       "cwd": "${workspaceFolder}/reconstruct-go",
-      "dlvFlags": ["--check-go-version=false"]
+      "console": "integratedTerminal",
+      "env": {
+        "GOROOT": "/Users/yuweikang/sdk/go1.27.0",
+        "GOTOOLCHAIN": "local",
+        "PATH": "/Users/yuweikang/sdk/go1.27.0/bin:${env:PATH}"
+      }
     },
     {
       "name": "Debug reconstruct-go CLI",
       "type": "go",
       "request": "launch",
-      "mode": "auto",
+      "mode": "debug",
+      "debugAdapter": "dlv-dap",
       "program": "${workspaceFolder}/reconstruct-go/cmd/cli",
       "args": ["请用 echo 工具重复：hello"],
       "cwd": "${workspaceFolder}/reconstruct-go",
-      "dlvFlags": ["--check-go-version=false"]
+      "console": "integratedTerminal",
+      "env": {
+        "GOROOT": "/Users/yuweikang/sdk/go1.27.0",
+        "GOTOOLCHAIN": "local",
+        "PATH": "/Users/yuweikang/sdk/go1.27.0/bin:${env:PATH}"
+      }
     }
   ]
 }

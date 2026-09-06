@@ -18,7 +18,9 @@ cd reconstruct-go
 go run ./cmd/cli "请用 echo 工具重复：hello"
 ```
 
-F5 选 **Debug reconstruct-go CLI**，断点打在 [`events.go`](../../reconstruct-go/internal/events/events.go) 的 `Emit`，或 [`loop.go`](../../reconstruct-go/internal/agent/loop.go) 里第一次 `events.Emit`。
+F5 选 **Debug reconstruct-go CLI**，断点打在 [`Ask`](../../reconstruct-go/internal/agent/agent.go) 的 `userText` 上最稳（字符串一定还活着）。再往下可看 [`Emit`](../../reconstruct-go/internal/events/events.go) 的 `event.Type`。
+
+若仍是 `unreadable` / E08：见 [01-loop.md](01-loop.md) 第 3 节。改过 `.vscode` 之后先 Reload Window。
 
 ## 第 2 节：Go 没有联合类型
 
