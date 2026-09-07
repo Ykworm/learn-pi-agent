@@ -18,13 +18,15 @@ cd reconstruct-go
 go run ./cmd/cli "请用 echo 工具重复：hello"
 ```
 
+第 3 片起当前树请用 [03-tools.md](03-tools.md) 第 1 节的命令。当时的 `echo` 见 tag `slice-02`。
+
 F5 选 **Debug reconstruct-go CLI**，断点打在 [`Ask`](../../reconstruct-go/internal/agent/agent.go) 的 `userText` 上最稳（字符串一定还活着）。再往下可看 [`Emit`](../../reconstruct-go/internal/events/events.go) 的 `event.Type`。
 
 若仍是 `unreadable` / E08：见 [01-loop.md](01-loop.md) 第 3 节。改过 `.vscode` 之后先 Reload Window。
 
 ## 第 2 节：Go 没有联合类型
 
-TS 的 `AgentEvent` 是按 `type` 收窄的联合。Go 用一个 `Event` 结构体，`Type` 当判别字段，构造函数只填该 type 用得到的字段。JSON 标签与 TS 对齐（`toolCallId`、`isError`），方便以后第 5 片写同一份 jsonl。
+TS 的 `AgentEvent` 是按 `type` 收窄的联合。Go 用一个 `Event` 结构体，`Type` 当判别字段，构造函数只填该 type 用得到的字段。JSON 标签与 TS 对齐（`toolCallId`、`isError`），第 5 片 jsonl 用同一套字段。
 
 `isError` 用 `*bool`，这样 `false` 也会进 JSON；若写成 `bool` 加 `omitempty`，成功的 `tool_result` 会把这个字段吞掉。
 
@@ -48,4 +50,4 @@ go run ./cmd/server
 
 ## 第 4 节：本片故意没有的
 
-和 TS 第 2 片一样：JSONL、`--json`、中断、`read` / `bash`。没有把 Gin 改成流式推送。
+和 TS 第 2 片一样：JSONL、`--json`、`read` / `bash`。没有把 Gin 改成流式推送。中断见 [04-abort.md](04-abort.md)。

@@ -9,7 +9,9 @@ const (
 	TypeToolCall         = "tool_call"
 	TypeToolResult       = "tool_result"
 	TypeAssistantMessage = "assistant_message"
+	TypeInterrupted      = "interrupted"
 	TypeTokenUsage       = "token_usage"
+	TypeSessionStart     = "session_start"
 )
 
 // Event 为什么存在：把「已经发生的事」从 loop 里抽出来；Go 没有 TS 联合类型，用 Type 当判别字段。
@@ -27,6 +29,11 @@ type Event struct {
 	TotalTokens      int    `json:"totalTokens,omitempty"`
 	CacheReadTokens  int    `json:"cacheReadTokens,omitempty"`
 	CacheWriteTokens int    `json:"cacheWriteTokens,omitempty"`
+	SessionID        string `json:"sessionId,omitempty"`
+	Model            string `json:"model,omitempty"`
+	API              string `json:"api,omitempty"`
+	BaseURL          string `json:"baseURL,omitempty"`
+	SystemPrompt     string `json:"systemPrompt,omitempty"`
 }
 
 // Receiver 为什么存在：loop 只调用 On，不关心谁在听。
@@ -35,7 +42,7 @@ type Receiver interface {
 	On(event Event)
 }
 
-// Emit 为什么存在：不能在 loop 里写死「打给 Console」；听众是切片，第 5 片再往里加即可。
+// Emit 为什么存在：不能在 loop 里写死「打给 Console」；听众是切片，SessionManager 和 Console 一起挂上。
 // 功能作用：把同一条事件按顺序发给每一个 receiver。没有 type → 组件路由表。
 func Emit(receivers []Receiver, event Event) {
 	for _, receiver := range receivers {
@@ -66,6 +73,12 @@ func AssistantMessage(text string) Event {
 	return Event{Type: TypeAssistantMessage, Text: text}
 }
 
+// Interrupted 为什么存在：人取消这一 turn 不是工具失败，不能做成 isError 的 tool_result。
+// 功能作用：构造 interrupted 事件。loop 先 Emit 再返回 ErrInterrupted。
+func Interrupted() Event {
+	return Event{Type: TypeInterrupted}
+}
+
 func TokenUsage(input, output, total, cacheRead, cacheWrite int) Event {
 	return Event{
 		Type:             TypeTokenUsage,
@@ -74,5 +87,18 @@ func TokenUsage(input, output, total, cacheRead, cacheWrite int) Event {
 		TotalTokens:      total,
 		CacheReadTokens:  cacheRead,
 		CacheWriteTokens: cacheWrite,
+	}
+}
+
+// SessionStart 为什么存在：文件头不是事件；人眼和 jsonl 仍要看见「这一次用哪份 session」。
+// 功能作用：构造 session_start。api 写死 completions，第 7 片才有第二条 API。
+func SessionStart(sessionID, model, baseURL, systemPrompt string) Event {
+	return Event{
+		Type:         TypeSessionStart,
+		SessionID:    sessionID,
+		Model:        model,
+		API:          "completions",
+		BaseURL:      baseURL,
+		SystemPrompt: systemPrompt,
 	}
 }

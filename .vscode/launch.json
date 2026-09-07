@@ -30,7 +30,7 @@
       "request": "launch",
       "name": "Debug reconstruct CLI",
       "runtimeExecutable": "${workspaceFolder}/reconstruct/node_modules/.bin/tsx",
-      "args": ["src/cli.ts", "请用 echo 工具重复：hello"],
+      "args": ["src/cli.ts", "列出当前目录"],
       "cwd": "${workspaceFolder}/reconstruct",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
@@ -59,7 +59,7 @@
       "mode": "debug",
       "debugAdapter": "dlv-dap",
       "program": "${workspaceFolder}/reconstruct-go/cmd/cli",
-      "args": ["请用 echo 工具重复：hello"],
+      "args": ["列出当前目录"],
       "cwd": "${workspaceFolder}/reconstruct-go",
       "console": "integratedTerminal",
       "env": {

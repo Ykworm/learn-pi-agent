@@ -8,15 +8,17 @@
     textarea { width: 100%; min-height: 6rem; }
     pre { white-space: pre-wrap; background: #f4f4f4; padding: 0.75rem; }
     button { margin-top: 0.5rem; }
+    label { display: inline-block; margin-left: 0.75rem; }
     h2 { font-size: 1rem; margin: 1.25rem 0 0.4rem; }
   </style>
 </head>
 <body>
   <h1>一句提问</h1>
-  <p>对应 TypeScript 的 CLI。提交后走 <code>POST /ask</code>。网页把听众换成收集器，turn 结束后一次返回事件；不是边跑边推送。</p>
-  <textarea id="msg">请用 echo 工具重复：hello</textarea>
+  <p>对应 TypeScript 的 CLI。提交后走 <code>POST /ask</code>。网页把听众换成收集器，turn 结束后一次返回事件；不是边跑边推送。跨请求接着问勾选继续，走和 <code>--continue</code> 同一份 jsonl。</p>
+  <textarea id="msg">列出当前目录</textarea>
   <div>
     <button type="button" id="send">发送</button>
+    <label><input type="checkbox" id="cont" /> 继续上一次 session</label>
   </div>
   <h2>终答</h2>
   <pre id="text"></pre>
@@ -32,11 +34,18 @@
         const res = await fetch("/ask", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: document.getElementById("msg").value }),
+          body: JSON.stringify({
+            message: document.getElementById("msg").value,
+            continue: document.getElementById("cont").checked,
+          }),
         });
         const data = await res.json();
         textEl.textContent = data.text || data.error || "";
-        eventsEl.textContent = JSON.stringify(data.events || [], null, 2);
+        eventsEl.textContent = JSON.stringify(
+          { sessionFile: data.sessionFile, events: data.events || [] },
+          null,
+          2,
+        );
       } catch (err) {
         textEl.textContent = String(err);
       }

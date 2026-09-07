@@ -2,7 +2,7 @@
   "name": "reconstruct-pi-agent",
   "private": true,
   "version": "0.0.0",
-  "description": "从 0 手写的原始 pi-agent。第 2 片：Chat Completions loop + echo + 事件总线。",
+  "description": "从 0 手写的原始 pi-agent。第 5 片：Completions loop + 工作区工具 + 事件 + AbortSignal + JSONL session。",
   "type": "module",
   "engines": {
     "node": ">=20.0.0"
@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "glob": "^11.1.0",
     "openai": "^5.12.2"
   },
   "devDependencies": {

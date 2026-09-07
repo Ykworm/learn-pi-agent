@@ -67,7 +67,7 @@ cli.ts
 
 1. 先能对 Chat Completions 说话，并且遇到 `tool_calls` 就本地执行再问一次（第 1 片）。
 2. loop 不要 `console.log`：改成广播事件，打印和存盘都是听众（第 2 片）。
-3. 把 `read` / `list` / `bash` 做成真工具；大输出截断；`read` 用行窗口看大文件（第 3 片）。
+3. 把 `read` / `list` / `bash` 做成真工具，再加 `glob` / `rg`；大输出截断；`read` 用行窗口看大文件（第 3 片：[03-tools.md](03-tools.md)）。
 4. Escape 必须停得下来：`AbortSignal`（第 4 片）。
 5. 把事件写成 JSONL，才能 `--continue`；再把事件翻译回 API 的 `messages`（第 5 片）。
 6. 同一套事件，换三种 CLI 皮：问一句就退、交互、stdin/stdout JSON（第 6 片）。
@@ -81,13 +81,13 @@ cli.ts
 
 **emit。** 循环里只调用 `receiver.on(event)`，自己不打印、不写盘。所有听众都收到全部 type（全量 fan-out）。没有「type → 组件」总路由表。Console 在自己的 `on()` 里 `switch`；JSON 和 session 通常全收。像进程内 pub/sub，不是带 broker 的 MQ。第 2 片代码：[02-events.md](02-events.md)。
 
-**AbortSignal。** `AbortController.abort()` 发出取消。HTTP、bash、loop 都看同一根 `signal`。没有它，Escape 停不了正在跑的模型和子进程。
+**AbortSignal。** `AbortController.abort()` 发出取消。HTTP、bash、loop 都看同一根 `signal`。没有它，停不了正在跑的模型和子进程。第 4 片 CLI 没有 TUI，入口是 Ctrl+C → `interrupt()`；原文 Escape 调的是同一个方法。代码：[04-abort.md](04-abort.md)。
 
-**截断。** 工具输出进 `messages`。超过约 1 MB 就标 truncated。第一版**不会**把整份大文件喂给模型。要看后面的内容：再调 `bash`/`rg`，或给 `read` 加 `offset`/`limit`。
+**截断。** 工具输出进 `messages`。超过约 1 MB 就标 truncated。第一版**不会**把整份大文件喂给模型。要看后面的内容：再调 `bash`/`rg`，或给 `read` 加 `offset`/`limit`。第 3 片代码：[03-tools.md](03-tools.md)。
 
 **print / RPC。** 都是不用 TUI、走 stdio。print 跑一次就退；RPC 进程一直活、stdin 收命令。第一版的 `--json` 是二者的种子。
 
-**事件还原成 API。** 磁盘存事件日志，API 要 `messages[]`。`setEvents`（我们会叫 `eventsToMessages`）按 type 翻译。`thinking`、token 统计不进 messages。
+**事件还原成 API。** 磁盘存事件日志，API 要 `messages[]`。`setEvents`（我们叫 `eventsToMessages`）按 type 翻译。`thinking`、token 统计不进 messages。第 5 片代码：[05-session.md](05-session.md)。
 
 ## 第 5 节：本片你该能回答的问题
 

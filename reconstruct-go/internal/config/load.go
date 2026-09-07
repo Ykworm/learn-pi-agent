@@ -29,7 +29,9 @@ type fileShape struct {
 	Listen       string `json:"listen"`
 }
 
-func rootDir() string {
+// RootDir 为什么存在：session 文件要固定落在 reconstruct-go/.sessions，不跟调用时的 cwd 乱跑。
+// 功能作用：返回本模块根目录（internal/config 再往上两级）。
+func RootDir() string {
 	_, file, _, ok := runtime.Caller(0)
 	if !ok {
 		return "."
@@ -59,7 +61,7 @@ func pick(values ...string) string {
 }
 
 func Load() (AppConfig, error) {
-	root := rootDir()
+	root := RootDir()
 	shared, err := readJSON(filepath.Join(root, "config.json"))
 	if err != nil {
 		return AppConfig{}, err

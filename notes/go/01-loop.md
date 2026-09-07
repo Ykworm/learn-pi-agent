@@ -13,6 +13,8 @@ cd reconstruct-go
 go run ./cmd/cli "请用 echo 工具重复：hello"
 ```
 
+第 3 片起 `echo` 已换成 `read` / `list` / `bash`。当前树请用 [03-tools.md](03-tools.md) 第 1 节的命令。当时的 `echo` 见 tag `slice-02`。
+
 F5 选 **Debug reconstruct-go CLI**，会立刻进 `Ask` / loop，不必再发 HTTP。
 
 Gin 还在：给「服务器 + 浏览器」调试用，不是日常提问方式。

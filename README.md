@@ -8,7 +8,7 @@
 
 ## 当前进度
 
-**第 2 片：事件总线。** TypeScript：[notes/ts/02-events.md](notes/ts/02-events.md)；Go：[notes/go/02-events.md](notes/go/02-events.md)。
+**第 5 片：JSONL session，事件还原成 messages。** TypeScript：[notes/ts/05-session.md](notes/ts/05-session.md)；Go：[notes/go/05-session.md](notes/go/05-session.md)。
 
 ## 目录
 
@@ -18,8 +18,8 @@
 | [`AGENTS.md`](AGENTS.md) | 给写代码的人：双端对齐、注释、当前切片范围 |
 | [`notes/ts/`](notes/ts/README.md) | TypeScript 笔记（含第 0 片概念） |
 | [`notes/go/`](notes/go/README.md) | Go 笔记（实现差异、Gin、断点） |
-| [`reconstruct/`](reconstruct/README.md) | TypeScript：loop + `echo` + 事件 + CLI |
-| [`reconstruct-go/`](reconstruct-go/README.md) | Go：CLI + 可选 Gin 网页（可看事件列表） |
+| [`reconstruct/`](reconstruct/README.md) | TypeScript：loop + 五个工作区工具 + 事件 + AbortSignal + JSONL session + CLI |
+| [`reconstruct-go/`](reconstruct-go/README.md) | Go：CLI + 可选 Gin 网页（可看事件列表；勾选继续走同一份 jsonl） |
 
 本阶段只读 `vendor/pi-mono-a74c5da/packages/agent/`。不读 TUI，不读 pods。
 
@@ -67,9 +67,9 @@ git checkout -b experiment/slice-00 slice-00
 |----|------|------|
 | 0 | 为什么造、首版目录 | 结束（无 agent 代码） |
 | 1 | Chat Completions + agent loop | 结束 |
-| 2 | 事件总线（全量 fan-out） | 进行中 |
-| 3 | 工具：`read` / `list` / `bash`，再 `glob` / `rg` | 未开始 |
-| 4 | `AbortSignal` 中断 | 未开始 |
-| 5 | JSONL session，事件还原成 messages | 未开始 |
+| 2 | 事件总线（全量 fan-out） | 结束 |
+| 3 | 工具：`read` / `list` / `bash`，再 `glob` / `rg` | 结束 |
+| 4 | `AbortSignal` 中断 | 结束 |
+| 5 | JSONL session，事件还原成 messages | 进行中 |
 | 6 | CLI：单次、交互、`--json` | 未开始 |
 | 7 | 第二条 API：Responses | 未开始 |

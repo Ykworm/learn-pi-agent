@@ -19,7 +19,7 @@ Agent 还不是 CLI、不是 session、不是 TUI。它是：
 
 | 文件 | 职责 |
 |------|------|
-| [`reconstruct/src/tools/echo.ts`](../../reconstruct/src/tools/echo.ts) | 工具的 schema + 本机实现 |
+| `src/tools/echo.ts`（第 3 片已删，当时见 tag `slice-02`） | 工具的 schema + 本机实现 |
 | [`reconstruct/src/tools/run.ts`](../../reconstruct/src/tools/run.ts) | 按名字分发 |
 | [`reconstruct/src/agent/loop.ts`](../../reconstruct/src/agent/loop.ts) | `for (;;)` 里发 HTTP、执行工具 |
 | [`reconstruct/src/agent/agent.ts`](../../reconstruct/src/agent/agent.ts) | 持有 `messages`，`ask()` 追加一条 user 再跑 loop |
@@ -49,6 +49,8 @@ cp config.local.example.json config.local.json
 cd reconstruct
 npx tsx src/cli.ts "请用 echo 工具重复：hello"
 ```
+
+第 3 片起 `echo` 已换成 `read` / `list` / `bash`。当前树请用 [03-tools.md](03-tools.md) 第 5 节的命令。当时的 `echo` 见 tag `slice-02`。
 
 Cursor 里：打开 `reconstruct/src/agent/loop.ts` 的 `for (;;)` 打断点，F5 选 **Debug reconstruct CLI**。
 

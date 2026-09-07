@@ -13,7 +13,7 @@
 1. loop / `ask()` **只广播**：`await receiver.on(event)`
 2. **每一个**听众都收到 **全部** type（全量 fan-out）
 3. 没有「type → 组件」总路由表。Console 在自己的 `on()` 里 `switch`；`token_usage` 收到了但什么都不印
-4. 第 5 片的 SessionManager、第 6 片的 JsonRenderer 会再挂上同一条总线；本片只挂打印（Go 调试页再挂一个收集器）
+4. 第 5 片的 SessionManager（[05-session.md](05-session.md)）、第 6 片的 JsonRenderer 会再挂上同一条总线；本片只挂打印（Go 调试页再挂一个收集器）
 
 这不是带 broker 的消息队列。没有按 tag 拉队列，也没有消费组。就是进程内 `for (r of receivers) await r.on(event)`。一个听众抛错会传到 loop。
 
@@ -31,7 +31,7 @@ token_usage              ← 第 2 次 POST 回来
 assistant_message        ← 终答；ask() 不再 return 这段文本
 ```
 
-故意还没有：`session_start`（第 5 片）、`interrupted`（第 4 片）、`thinking`（第 7 片 Responses）。
+当时故意还没有：`session_start`（第 5 片）、`interrupted`（第 4 片已补）、`thinking`（第 7 片 Responses）。
 
 `assistant_start` 在进入 `for (;;)` **之前**发一次，和原文 `callModelChatCompletionsApi` 相同。
 
@@ -56,6 +56,8 @@ cd reconstruct
 npx tsx src/cli.ts "请用 echo 工具重复：hello"
 ```
 
+第 3 片起当前树请用 [03-tools.md](03-tools.md) 第 5 节的命令。当时的 `echo` 见 tag `slice-02`。
+
 Cursor 里：F5 选 **Debug reconstruct CLI**，断点打在 [`events.ts`](../../reconstruct/src/events.ts) 的 `emitAll`，看同一条事件被哪些听众的 `on` 接到。
 
 ## 第 5 节：看代码时盯这几行
@@ -67,7 +69,7 @@ Cursor 里：F5 选 **Debug reconstruct CLI**，断点打在 [`events.ts`](../..
 
 ## 第 6 节：本片故意没有的
 
-JSONL 落盘、`setEvents`、`--json`、AbortSignal、`read` / `bash`、Responses、TUI。原文 ConsoleRenderer 的 spinner / chalk 也不抄。缺了它们，总线已经能换听众。
+JSONL 落盘见 [05-session.md](05-session.md)。`--json`、Responses、TUI。原文 ConsoleRenderer 的 spinner / chalk 也不抄。缺了它们，总线已经能换听众。`interrupted` 见 [04-abort.md](04-abort.md)。
 
 ## 第 7 节：你该能回答的问题
 
@@ -78,4 +80,4 @@ JSONL 落盘、`setEvents`、`--json`、AbortSignal、`read` / `bash`、Response
 
 答得出来再开第 3 片。卡住就问。
 
-Go 对照（结构体事件、Gin 收集器）：[../go/02-events.md](../go/02-events.md)。
+第 3 片：[03-tools.md](03-tools.md)。Go 对照（结构体事件、Gin 收集器）：[../go/02-events.md](../go/02-events.md)。

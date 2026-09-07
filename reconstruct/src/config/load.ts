@@ -21,7 +21,8 @@ type FileShape = {
 	apiKey?: unknown;
 };
 
-const reconstructRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
+/** 为什么存在：session 文件要固定落在 reconstruct/.sessions，不跟调用时的 cwd 乱跑。 */
+export const reconstructRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
 
 function readJson(path: string): FileShape {
 	const raw: unknown = JSON.parse(readFileSync(path, "utf8"));

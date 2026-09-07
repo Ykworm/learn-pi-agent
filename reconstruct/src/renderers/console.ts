@@ -4,6 +4,20 @@
  */
 import type { AgentEvent, AgentEventReceiver } from "../events.js";
 
+const TOOL_RESULT_PREVIEW_LINES = 10;
+
+/** 为什么存在：终端只给人看前几行；事件里的 result 仍是工具返回的全文（已按 1 MB 切过）。
+ *  功能作用：超过 10 行就只留下开头，并标明还有多少行没印。 */
+
+function previewToolResult(result: string): string {
+	const lines = result.split("\n");
+	if (lines.length <= TOOL_RESULT_PREVIEW_LINES) {
+		return result;
+	}
+	const hidden = lines.length - TOOL_RESULT_PREVIEW_LINES;
+	return `${lines.slice(0, TOOL_RESULT_PREVIEW_LINES).join("\n")}\n... (${hidden} more lines)`;
+}
+
 export class ConsoleRenderer implements AgentEventReceiver {
 	/**
 	 * 为什么存在：fan-out 把每条事件都送来；这里才决定人眼看什么。
@@ -11,6 +25,10 @@ export class ConsoleRenderer implements AgentEventReceiver {
 	 */
 	async on(event: AgentEvent): Promise<void> {
 		switch (event.type) {
+			case "session_start":
+				console.log(`[session] ${event.sessionId}  model=${event.model}`);
+				console.log();
+				break;
 			case "user_message":
 				console.log("[user]");
 				console.log(event.text);
@@ -24,9 +42,9 @@ export class ConsoleRenderer implements AgentEventReceiver {
 				break;
 			case "tool_result":
 				if (event.isError) {
-					console.error(event.result);
+					console.error(previewToolResult(event.result));
 				} else {
-					console.log(event.result);
+					console.log(previewToolResult(event.result));
 				}
 				console.log();
 				break;
@@ -34,8 +52,12 @@ export class ConsoleRenderer implements AgentEventReceiver {
 				console.log(event.text);
 				console.log();
 				break;
+			case "interrupted":
+				console.log("[interrupted]");
+				console.log();
+				break;
 			case "token_usage":
-				// 收到了但不印。第 5 片写 jsonl 的听众会全收，包括这一条。
+				// 收到了但不印。SessionManager 会原样写入 jsonl。
 				break;
 		}
 	}
