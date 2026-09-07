@@ -3,18 +3,23 @@
  * 功能作用：在同一个 turn 里循环 POST Chat Completions，直到模型不再带 tool_calls，或 signal 被 abort。发生了什么只 emit，不打印。
  */
 import type OpenAI from "openai";
-import type { ChatCompletionMessageParam } from "openai/resources/chat/completions.js";
-import { interruptedError, isInterrupted } from "../abort.js";
+import type {
+	ChatCompletionCreateParamsNonStreaming,
+	ChatCompletionMessage,
+	ChatCompletionMessageParam,
+} from "openai/resources/chat/completions.js";
+import { abortTurn, isInterrupted } from "../abort.js";
 import { emitAll, type AgentEventReceiver } from "../events.js";
+import { completionsAssistant } from "../session/messages.js";
 import { COMPLETION_TOOLS, runTool } from "../tools/run.js";
 
 /**
- * 为什么存在：取消发生在 create() 途中、工具执行前、工具抛 Interrupted，都要先广播再停。
- * 功能作用：发 interrupted，再 throw。ask() 会吞掉这个错误。
+ * 为什么存在：OpenAI 的 message 类型没有这个字段；DeepSeek 等厂商把 think 放在 content 旁边。
+ * 功能作用：从 Completions 的 assistant message 取出 reasoning_content。没有就空串。
  */
-async function abortTurn(receivers: readonly AgentEventReceiver[]): Promise<never> {
-	await emitAll(receivers, { type: "interrupted" });
-	throw interruptedError();
+function reasoningContentOf(message: ChatCompletionMessage): string {
+	const value = (message as ChatCompletionMessage & { reasoning_content?: unknown }).reasoning_content;
+	return typeof value === "string" ? value : "";
 }
 
 /**
@@ -37,13 +42,15 @@ export async function runCompletionsTurn(
 
 		let response: Awaited<ReturnType<typeof client.chat.completions.create>>;
 		try {
+			// DeepSeek V4：不带 thinking.enabled，reasoning_content 有时是空的。
 			response = await client.chat.completions.create(
 				{
 					model,
 					messages,
 					tools: COMPLETION_TOOLS,
 					tool_choice: "auto",
-				},
+					thinking: { type: "enabled" },
+				} as ChatCompletionCreateParamsNonStreaming,
 				{ signal },
 			);
 		} catch (err: unknown) {
@@ -70,13 +77,20 @@ export async function runCompletionsTurn(
 			throw new Error("Chat Completions 没有返回 message");
 		}
 
+		const reasoning = reasoningContentOf(message);
+		if (reasoning) {
+			await emitAll(receivers, { type: "thinking", text: reasoning });
+		}
+
 		const toolCalls = message.tool_calls;
 		if (toolCalls && toolCalls.length > 0) {
-			messages.push({
-				role: "assistant",
-				content: message.content ?? null,
-				tool_calls: toolCalls,
-			});
+			messages.push(
+				completionsAssistant({
+					content: message.content ?? null,
+					toolCalls,
+					...(reasoning ? { reasoningContent: reasoning } : {}),
+				}),
+			);
 
 			for (const call of toolCalls) {
 				if (signal.aborted) {
@@ -143,7 +157,12 @@ export async function runCompletionsTurn(
 		}
 
 		const text = message.content ?? "";
-		messages.push({ role: "assistant", content: text });
+		messages.push(
+			completionsAssistant({
+				content: text,
+				...(reasoning ? { reasoningContent: reasoning } : {}),
+			}),
+		);
 		await emitAll(receivers, { type: "assistant_message", text });
 		return;
 	}

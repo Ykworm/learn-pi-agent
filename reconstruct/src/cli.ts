@@ -7,7 +7,7 @@ import * as readline from "node:readline/promises";
 import { join } from "node:path";
 import { stdin as input, stdout as output } from "node:process";
 import { Agent } from "./agent/agent.js";
-import { loadAppConfig, reconstructRoot } from "./config/load.js";
+import { loadAppConfig, parseApiKind, reconstructRoot, type ApiKind } from "./config/load.js";
 import type { AgentEventReceiver } from "./events.js";
 import { ConsoleRenderer } from "./renderers/console.js";
 import { JsonRenderer } from "./renderers/json.js";
@@ -17,6 +17,7 @@ type ParsedCli = {
 	help: boolean;
 	continueSession: boolean;
 	json: boolean;
+	api?: ApiKind | undefined;
 	messages: string[];
 };
 
@@ -24,8 +25,10 @@ function parseArgs(argv: string[]): ParsedCli {
 	let help = false;
 	let continueSession = false;
 	let json = false;
+	let api: ApiKind | undefined;
 	const messages: string[] = [];
-	for (const arg of argv) {
+	for (let i = 0; i < argv.length; i++) {
+		const arg = argv[i];
 		switch (arg) {
 			case "--help":
 			case "-h":
@@ -38,6 +41,15 @@ function parseArgs(argv: string[]): ParsedCli {
 			case "--json":
 				json = true;
 				break;
+			case "--api": {
+				const value = argv[i + 1];
+				if (value === undefined) {
+					throw new Error("--api 需要 completions 或 responses");
+				}
+				i += 1;
+				api = parseApiKind(value);
+				break;
+			}
 			default:
 				if (arg.startsWith("-")) {
 					throw new Error(`未知参数: ${arg}`);
@@ -45,7 +57,7 @@ function parseArgs(argv: string[]): ParsedCli {
 				messages.push(arg);
 		}
 	}
-	return { help, continueSession, json, messages };
+	return { help, continueSession, json, api, messages };
 }
 
 function printHelp(): void {
@@ -57,10 +69,12 @@ function printHelp(): void {
   npx tsx src/cli.ts --continue
   npx tsx src/cli.ts --json "列出当前目录"
   npx tsx src/cli.ts --json
+  npx tsx src/cli.ts --api responses "1+1 等于几？不要调工具"
 
 Options:
   --continue, -c    继续最近一份 session
   --json            事件一行一个 JSON 打到 stdout
+  --api <type>      completions 或 responses（默认读 config.json）
   --help, -h        显示这段说明
 
 无位置参数 = 交互。每个位置参数是一句独立的 user，按顺序 ask 再退。`);
@@ -228,18 +242,20 @@ async function main(): Promise<void> {
 		return;
 	}
 
-	let config = loadAppConfig();
+	let config = loadAppConfig(parsed.api);
 	const session = SessionManager.open({
 		dir: join(reconstructRoot, ".sessions"),
 		continue: parsed.continueSession,
 	});
 	const record = session.read();
 	if (record) {
+		config = loadAppConfig(parseApiKind(record.header.config.api));
 		config = {
 			...config,
 			baseURL: record.header.config.baseURL,
 			model: record.header.config.model,
 			systemPrompt: record.header.config.systemPrompt,
+			api: parseApiKind(record.header.config.api),
 		};
 		if (!parsed.json) {
 			console.log(`[continue] ${record.events.length} events from ${session.filePath}`);
@@ -249,6 +265,7 @@ async function main(): Promise<void> {
 			baseURL: config.baseURL,
 			model: config.model,
 			systemPrompt: config.systemPrompt,
+			api: config.api,
 		});
 	}
 
@@ -258,6 +275,7 @@ async function main(): Promise<void> {
 			apiKey: config.apiKey,
 			baseURL: config.baseURL,
 			model: config.model,
+			api: config.api,
 			systemPrompt: config.systemPrompt,
 		},
 		renderer,

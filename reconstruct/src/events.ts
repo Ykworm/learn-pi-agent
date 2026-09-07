@@ -5,7 +5,7 @@
 
 /**
  * 为什么存在：把「已经发生的事」从 loop 里抽出来，听众才能各自处理，loop 才不用认识 stdout。
- * 功能作用：Completions 会发出的全部 type。thinking 是第 7 片 Responses。
+ * 功能作用：两条 API 共用的事件形状。thinking：Completions 来自 reasoning_content，Responses 来自 output 的 reasoning。
  */
 export type AgentEvent =
 	| {
@@ -18,6 +18,7 @@ export type AgentEvent =
 	  } // 问第一句之前；不进 messages
 	| { type: "user_message"; text: string } // 人的一句；在 ask() 发，不在 loop
 	| { type: "assistant_start" } // 每个 turn 一次，在第一次 POST 之前
+	| { type: "thinking"; text: string } // Completions 的 reasoning_content；Responses 的 reasoning
 	| { type: "tool_call"; toolCallId: string; name: string; args: string }
 	| { type: "tool_result"; toolCallId: string; result: string; isError: boolean }
 	| { type: "assistant_message"; text: string } // 终答；ask() 不再 return 这段文本

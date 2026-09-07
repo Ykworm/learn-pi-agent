@@ -26,7 +26,7 @@ export class ConsoleRenderer implements AgentEventReceiver {
 	async on(event: AgentEvent): Promise<void> {
 		switch (event.type) {
 			case "session_start":
-				console.log(`[session] ${event.sessionId}  model=${event.model}`);
+				console.log(`[session] ${event.sessionId}  model=${event.model}  api=${event.api}`);
 				console.log();
 				break;
 			case "user_message":
@@ -36,6 +36,9 @@ export class ConsoleRenderer implements AgentEventReceiver {
 				break;
 			case "assistant_start":
 				console.log("[assistant]");
+				break;
+			case "thinking":
+				console.log(`[thinking] ${event.text}`);
 				break;
 			case "tool_call":
 				console.log(`[tool] ${event.name}(${event.args})`);

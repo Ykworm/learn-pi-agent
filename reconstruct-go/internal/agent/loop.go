@@ -5,6 +5,7 @@ package agent
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -16,13 +17,45 @@ import (
 
 // abortTurn 为什么存在：取消发生在 HTTP 途中、工具执行前、工具返回 cancel，都要先广播再停。
 // 功能作用：发 interrupted，再返回 ErrInterrupted。Ask 会吞掉这个 error。
-func abortTurn(receivers []events.Receiver, messages []openai.ChatCompletionMessageParamUnion) ([]openai.ChatCompletionMessageParamUnion, error) {
+func abortTurn(receivers []events.Receiver) error {
 	events.Emit(receivers, events.Interrupted())
-	return messages, ErrInterrupted
+	return ErrInterrupted
 }
 
 func canceled(err error) bool {
 	return errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) || errors.Is(err, ErrInterrupted)
+}
+
+// reasoningContent 为什么存在：官方 ChatCompletionMessage 没有这个字段；DeepSeek 把 think 放在 content 旁边。
+// 功能作用：从这次返回的原始 JSON 取出 reasoning_content。没有就空串。
+func reasoningContent(msg openai.ChatCompletionMessage) string {
+	raw := msg.RawJSON()
+	if raw == "" {
+		return ""
+	}
+	var body struct {
+		ReasoningContent string `json:"reasoning_content"`
+	}
+	if err := json.Unmarshal([]byte(raw), &body); err != nil {
+		return ""
+	}
+	return body.ReasoningContent
+}
+
+// assistantFromMessage 为什么存在：ToParam 丢掉厂商字段；本仓库 Completions 每次都带 tools，DeepSeek 要求 reasoning_content 原样送回。
+// 功能作用：把这次返回的 assistant 变成下一轮 messages 里的一条，有 think 就 SetExtraFields。
+func assistantFromMessage(msg openai.ChatCompletionMessage) openai.ChatCompletionMessageParamUnion {
+	asst := msg.ToAssistantMessageParam()
+	if text := reasoningContent(msg); text != "" {
+		asst.SetExtraFields(map[string]any{"reasoning_content": text})
+	}
+	return openai.ChatCompletionMessageParamUnion{OfAssistant: &asst}
+}
+
+func emitThinking(receivers []events.Receiver, msg openai.ChatCompletionMessage) {
+	if text := reasoningContent(msg); text != "" {
+		events.Emit(receivers, events.Thinking(text))
+	}
 }
 
 // runCompletionsTurn 为什么存在：一个 turn 里可能多次 HTTP；发请求、执行工具、广播事件都在这里，Ask 不管。
@@ -32,20 +65,25 @@ func runCompletionsTurn(ctx context.Context, client openai.Client, model string,
 
 	for {
 		if ctx.Err() != nil {
-			return abortTurn(receivers, messages)
+			return messages, abortTurn(receivers)
 		}
 
-		resp, err := client.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
+		params := openai.ChatCompletionNewParams{
 			Model:    model,
 			Messages: messages,
 			Tools:    tools.CompletionsTools,
 			ToolChoice: openai.ChatCompletionToolChoiceOptionUnionParam{
 				OfAuto: openai.String("auto"),
 			},
+		}
+		// DeepSeek V4：不带 thinking.enabled，reasoning_content 有时是空的。
+		params.SetExtraFields(map[string]any{
+			"thinking": map[string]string{"type": "enabled"},
 		})
+		resp, err := client.Chat.Completions.New(ctx, params)
 		if err != nil {
 			if canceled(err) || ctx.Err() != nil {
-				return abortTurn(receivers, messages)
+				return messages, abortTurn(receivers)
 			}
 			return messages, err
 		}
@@ -66,18 +104,19 @@ func runCompletionsTurn(ctx context.Context, client openai.Client, model string,
 		}
 
 		msg := resp.Choices[0].Message
+		emitThinking(receivers, msg)
 		if len(msg.ToolCalls) > 0 {
-			messages = append(messages, msg.ToParam())
+			messages = append(messages, assistantFromMessage(msg))
 			for _, call := range msg.ToolCalls {
 				if ctx.Err() != nil {
-					return abortTurn(receivers, messages)
+					return messages, abortTurn(receivers)
 				}
 				switch variant := call.AsAny().(type) {
 				case openai.ChatCompletionMessageFunctionToolCall:
 					events.Emit(receivers, events.ToolCall(variant.ID, variant.Function.Name, variant.Function.Arguments))
 					result, runErr := tools.Run(ctx, variant.Function.Name, variant.Function.Arguments)
 					if canceled(runErr) || ctx.Err() != nil {
-						return abortTurn(receivers, messages)
+						return messages, abortTurn(receivers)
 					}
 					if runErr != nil {
 						text := runErr.Error()
@@ -97,7 +136,7 @@ func runCompletionsTurn(ctx context.Context, client openai.Client, model string,
 			continue
 		}
 
-		messages = append(messages, msg.ToParam())
+		messages = append(messages, assistantFromMessage(msg))
 		events.Emit(receivers, events.AssistantMessage(msg.Content))
 		return messages, nil
 	}

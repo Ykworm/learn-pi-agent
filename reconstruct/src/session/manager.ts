@@ -15,6 +15,7 @@ export type SessionFileConfig = {
 	baseURL: string;
 	model: string;
 	systemPrompt: string;
+	api: string;
 };
 
 type SessionHeaderLine = {
@@ -89,6 +90,9 @@ function parseRecord(filePath: string): SessionRecord | null {
 					typeof candidate.config.model === "string" &&
 					typeof candidate.config.systemPrompt === "string"
 				) {
+					if (typeof candidate.config.api !== "string" || candidate.config.api.trim() === "") {
+						candidate.config.api = "completions";
+					}
 					header = candidate;
 				}
 			} else if (row.type === "event") {

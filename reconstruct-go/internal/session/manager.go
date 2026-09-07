@@ -21,6 +21,7 @@ type FileConfig struct {
 	BaseURL      string `json:"baseURL"`
 	Model        string `json:"model"`
 	SystemPrompt string `json:"systemPrompt"`
+	API          string `json:"api,omitempty"`
 }
 
 type headerLine struct {
@@ -119,6 +120,9 @@ func parseRecord(filePath string) *Record {
 			}
 			if row.ID == "" || row.Config.BaseURL == "" || row.Config.Model == "" || row.Config.SystemPrompt == "" {
 				continue
+			}
+			if row.Config.API == "" {
+				row.Config.API = "completions"
 			}
 			copied := row
 			header = &copied

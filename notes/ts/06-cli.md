@@ -107,6 +107,6 @@ TUI、把旧事件重绘一遍、Escape 停、`--api responses`、命令行覆�
 3. 无参数交互时，模型怎么还记得上一句？这和 `--continue` 是不是同一条路？
 4. stdin 上的 `{"type":"interrupt"}` 和终端 Ctrl+C，最后有没有汇合到同一个 `interrupt()`？
 
-答得出来再开第 7 片（Responses）。卡住就问。
+答得出来再开第 7 片（Responses）：[07-responses.md](07-responses.md)。卡住就问。
 
 Go 对照（stdin goroutine、Gin 不改）：[../go/06-cli.md](../go/06-cli.md)。

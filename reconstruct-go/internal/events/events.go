@@ -6,6 +6,7 @@ package events
 const (
 	TypeUserMessage      = "user_message"
 	TypeAssistantStart   = "assistant_start"
+	TypeThinking         = "thinking"
 	TypeToolCall         = "tool_call"
 	TypeToolResult       = "tool_result"
 	TypeAssistantMessage = "assistant_message"
@@ -60,6 +61,10 @@ func AssistantStart() Event {
 	return Event{Type: TypeAssistantStart}
 }
 
+func Thinking(text string) Event {
+	return Event{Type: TypeThinking, Text: text}
+}
+
 func ToolCall(id, name, args string) Event {
 	return Event{Type: TypeToolCall, ToolCallID: id, Name: name, Args: args}
 }
@@ -99,13 +104,13 @@ func TokenUsage(input, output, total, cacheRead, cacheWrite int) Event {
 }
 
 // SessionStart 为什么存在：文件头不是事件；人眼和 jsonl 仍要看见「这一次用哪份 session」。
-// 功能作用：构造 session_start。api 写死 completions，第 7 片才有第二条 API。
-func SessionStart(sessionID, model, baseURL, systemPrompt string) Event {
+// 功能作用：构造 session_start。api 是 completions 或 responses。
+func SessionStart(sessionID, model, api, baseURL, systemPrompt string) Event {
 	return Event{
 		Type:         TypeSessionStart,
 		SessionID:    sessionID,
 		Model:        model,
-		API:          "completions",
+		API:          api,
 		BaseURL:      baseURL,
 		SystemPrompt: systemPrompt,
 	}

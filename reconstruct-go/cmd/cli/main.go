@@ -22,12 +22,15 @@ type parsedCLI struct {
 	help            bool
 	continueSession bool
 	json            bool
+	api             string
+	apiSet          bool
 	messages        []string
 }
 
 func parseArgs(args []string) (parsedCLI, error) {
 	var parsed parsedCLI
-	for _, arg := range args {
+	for i := 0; i < len(args); i++ {
+		arg := args[i]
 		switch arg {
 		case "--help", "-h":
 			parsed.help = true
@@ -35,6 +38,17 @@ func parseArgs(args []string) (parsedCLI, error) {
 			parsed.continueSession = true
 		case "--json":
 			parsed.json = true
+		case "--api":
+			if i+1 >= len(args) {
+				return parsedCLI{}, fmt.Errorf("--api 需要 completions 或 responses")
+			}
+			i++
+			api, err := config.NormalizeAPI(args[i])
+			if err != nil {
+				return parsedCLI{}, err
+			}
+			parsed.api = api
+			parsed.apiSet = true
 		default:
 			if strings.HasPrefix(arg, "-") {
 				return parsedCLI{}, fmt.Errorf("未知参数: %s", arg)
@@ -54,10 +68,12 @@ func printHelp() {
   go run ./cmd/cli --continue
   go run ./cmd/cli --json "列出当前目录"
   go run ./cmd/cli --json
+  go run ./cmd/cli --api responses "1+1 等于几？不要调工具"
 
 Options:
   --continue, -c    继续最近一份 session
   --json            事件一行一个 JSON 打到 stdout
+  --api <type>      completions 或 responses（默认读 config.json）
   --help, -h        显示这段说明
 
 无位置参数 = 交互。每个位置参数是一句独立的 user，按顺序 Ask 再退。
@@ -96,7 +112,11 @@ func main() {
 		return
 	}
 
-	cfg, err := config.Load()
+	override := ""
+	if parsed.apiSet {
+		override = parsed.api
+	}
+	cfg, err := config.Load(override)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
@@ -105,9 +125,21 @@ func main() {
 	sess := session.Open(filepath.Join(config.RootDir(), ".sessions"), parsed.continueSession)
 	record := sess.Read()
 	if record != nil {
+		api, apiErr := config.NormalizeAPI(record.Header.Config.API)
+		if apiErr != nil {
+			fmt.Fprintln(os.Stderr, apiErr)
+			os.Exit(1)
+		}
+		loaded, loadErr := config.Load(api)
+		if loadErr != nil {
+			fmt.Fprintln(os.Stderr, loadErr)
+			os.Exit(1)
+		}
+		cfg = loaded
 		cfg.BaseURL = record.Header.Config.BaseURL
 		cfg.Model = record.Header.Config.Model
 		cfg.SystemPrompt = record.Header.Config.SystemPrompt
+		cfg.API = api
 		if !parsed.json {
 			fmt.Printf("[continue] %d events from %s\n", len(record.Events), sess.FilePath)
 		}
@@ -116,6 +148,7 @@ func main() {
 			BaseURL:      cfg.BaseURL,
 			Model:        cfg.Model,
 			SystemPrompt: cfg.SystemPrompt,
+			API:          cfg.API,
 		})
 	}
 

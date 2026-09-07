@@ -87,7 +87,7 @@ cli.ts
 
 **print / RPC。** 都是不用 TUI、走 stdio。print 跑一次就退；RPC 进程一直活、stdin 收命令。第一版的 `--json` 是二者的种子。
 
-**事件还原成 API。** 磁盘存事件日志，API 要 `messages[]`。`setEvents`（我们叫 `eventsToMessages`）按 type 翻译。`thinking`、token 统计不进 messages。第 5 片代码：[05-session.md](05-session.md)。
+**事件还原成 API。** 磁盘存事件日志，API 要 `messages[]` 或 Responses 的 `input[]`。`setEvents`（我们叫 `eventsToMessages` / `eventsToResponsesInput`）按 type 翻译。`token_usage` 不进请求体。`thinking` 在 Completions 上挂到 assistant 的 `reasoning_content`，在 Responses 上写成 `reasoning` 条目。第 5 片代码：[05-session.md](05-session.md)；第 7 片：[07-responses.md](07-responses.md)。
 
 ## 第 5 节：本片你该能回答的问题
 

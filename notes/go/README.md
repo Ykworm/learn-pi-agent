@@ -14,4 +14,6 @@
 
 第 6 片 CLI 三种皮：[06-cli.md](06-cli.md)
 
+第 7 片第二条 API：[07-responses.md](07-responses.md)
+
 仓库约定：[AGENTS.md](../../AGENTS.md)。

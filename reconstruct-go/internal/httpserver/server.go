@@ -1,7 +1,7 @@
 package httpserver
 
 // 为什么存在：Go 版可以用浏览器当入口，对应 TypeScript 的 cli.ts；loop 仍然是内部的 Completions 循环。
-// 功能作用：GET / 提供输入页；POST /ask 同时挂收集器、Console 和 SessionManager，turn 结束后 JSON 带回事件列表。
+// 功能作用：GET / 提供输入页；POST /ask 同时挂收集器、Console 和 SessionManager，turn 结束后 JSON 带回事件列表。api 来自配置或 session 头。
 
 import (
 	_ "embed"
@@ -70,14 +70,27 @@ func New(cfg config.AppConfig) *gin.Engine {
 		sess := session.Open(filepath.Join(config.RootDir(), ".sessions"), body.Continue)
 		record := sess.Read()
 		if record != nil {
+			api, apiErr := config.NormalizeAPI(record.Header.Config.API)
+			if apiErr != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": apiErr.Error()})
+				return
+			}
+			loaded, loadErr := config.Load(api)
+			if loadErr != nil {
+				c.JSON(http.StatusBadGateway, gin.H{"error": loadErr.Error()})
+				return
+			}
+			turnCfg = loaded
 			turnCfg.BaseURL = record.Header.Config.BaseURL
 			turnCfg.Model = record.Header.Config.Model
 			turnCfg.SystemPrompt = record.Header.Config.SystemPrompt
+			turnCfg.API = api
 		} else {
 			sess.WriteHeader(session.FileConfig{
 				BaseURL:      turnCfg.BaseURL,
 				Model:        turnCfg.Model,
 				SystemPrompt: turnCfg.SystemPrompt,
+				API:          turnCfg.API,
 			})
 		}
 		col := &eventCollector{}

@@ -7,6 +7,7 @@ import (
 	"context"
 
 	"github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/responses"
 )
 
 // CompletionsTools 为什么存在：create 的 tools 和 Run 的 switch 必须是同一张表，漏登一边模型会调一个本机没有的名字。
@@ -17,6 +18,29 @@ var CompletionsTools = []openai.ChatCompletionToolUnionParam{
 	BashTool,
 	GlobTool,
 	RgTool,
+}
+
+// ResponsesTools 为什么存在：Responses 的 function tool 把 name 放在顶层，不再套一层 function。名字和 parameters 必须与 Completions 那张表相同。
+// 功能作用：同一批工具，改成 POST /v1/responses 要的外套。strict 关掉，避免我们的 schema 过不了严格模式。
+var ResponsesTools = completionsToResponsesTools()
+
+func completionsToResponsesTools() []responses.ToolUnionParam {
+	out := make([]responses.ToolUnionParam, 0, len(CompletionsTools))
+	for _, tool := range CompletionsTools {
+		fn := tool.GetFunction()
+		if fn == nil {
+			continue
+		}
+		out = append(out, responses.ToolUnionParam{
+			OfFunction: &responses.FunctionToolParam{
+				Name:        fn.Name,
+				Description: fn.Description,
+				Parameters:  fn.Parameters,
+				Strict:      openai.Bool(false),
+			},
+		})
+	}
+	return out
 }
 
 // Run 为什么存在：loop 只按名字调用，不内嵌每个工具的实现。

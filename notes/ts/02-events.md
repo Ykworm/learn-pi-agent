@@ -31,7 +31,7 @@ token_usage              ← 第 2 次 POST 回来
 assistant_message        ← 终答；ask() 不再 return 这段文本
 ```
 
-当时故意还没有：`session_start`（第 5 片）、`interrupted`（第 4 片已补）、`thinking`（第 7 片 Responses）。
+当时故意还没有：`session_start`（第 5 片）、`interrupted`（第 4 片已补）、`thinking`（第 7 片：Completions 读 `reasoning_content`，Responses 读 `reasoning`）。
 
 `assistant_start` 在进入 `for (;;)` **之前**发一次，和原文 `callModelChatCompletionsApi` 相同。
 
@@ -69,7 +69,7 @@ Cursor 里：F5 选 **Debug reconstruct CLI**，断点打在 [`events.ts`](../..
 
 ## 第 6 节：本片故意没有的
 
-JSONL 落盘见 [05-session.md](05-session.md)。`--json` 见 [06-cli.md](06-cli.md)。Responses、TUI。原文 ConsoleRenderer 的 spinner / chalk 也不抄。缺了它们，总线已经能换听众。`interrupted` 见 [04-abort.md](04-abort.md)。
+JSONL 落盘见 [05-session.md](05-session.md)。`--json` 见 [06-cli.md](06-cli.md)。Responses 见 [07-responses.md](07-responses.md)。TUI。原文 ConsoleRenderer 的 spinner / chalk 也不抄。缺了它们，总线已经能换听众。`interrupted` 见 [04-abort.md](04-abort.md)。
 
 ## 第 7 节：你该能回答的问题
 

@@ -31,13 +31,15 @@ type Console struct{}
 func (Console) On(event events.Event) {
 	switch event.Type {
 	case events.TypeSessionStart:
-		fmt.Printf("[session] %s  model=%s\n\n", event.SessionID, event.Model)
+		fmt.Printf("[session] %s  model=%s  api=%s\n\n", event.SessionID, event.Model, event.API)
 	case events.TypeUserMessage:
 		fmt.Println("[user]")
 		fmt.Println(event.Text)
 		fmt.Println()
 	case events.TypeAssistantStart:
 		fmt.Println("[assistant]")
+	case events.TypeThinking:
+		fmt.Printf("[thinking] %s\n", event.Text)
 	case events.TypeToolCall:
 		fmt.Printf("[tool] %s(%s)\n", event.Name, event.Args)
 	case events.TypeToolResult:
