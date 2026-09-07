@@ -40,7 +40,7 @@ Mario 当时已经会用 Claude Code 一类 harness，但有三件事让他决�
 | `src/tools/tools.ts` | 264 | `read` / `list` / `bash` / `glob` / `rg` |
 | `src/session-manager.ts` | 176 | JSONL 事件日志 |
 | `src/cli.ts` | 294 | 单次提问、交互、`--json` |
-| `src/args.ts` | 204 | 参数解析（我们第 6 片前不抄） |
+| `src/args.ts` | 204 | 参数解析（我们不抄这一份通用解析器） |
 | `src/renderers/console-renderer.ts` | 130 | 终端听众，内部 `switch (event.type)` |
 | `src/renderers/json-renderer.ts` | 7 | 每条事件 `JSON.stringify` |
 | `src/renderers/tui-renderer.ts` | 353 | 本阶段不读 |

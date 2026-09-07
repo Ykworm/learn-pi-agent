@@ -27,7 +27,7 @@ type Agent struct {
 }
 
 // New 为什么存在：听众是构造时挂上的，不是 loop 里 fmt.Println。
-// 功能作用：可变参数就是 receivers[]。CLI 传 Console 和 SessionManager。
+// 功能作用：可变参数就是 receivers[]。CLI 传 renderer 和 SessionManager。
 func New(cfg config.AppConfig, receivers ...events.Receiver) *Agent {
 	return &Agent{
 		client: openai.NewClient(

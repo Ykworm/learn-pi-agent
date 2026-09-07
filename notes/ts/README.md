@@ -15,4 +15,6 @@
 
 第 5 片 JSONL session：[05-session.md](05-session.md)
 
+第 6 片 CLI 三种皮：[06-cli.md](06-cli.md)
+
 仓库约定：[AGENTS.md](../../AGENTS.md)。Go 笔记：[../go/](../go/)。

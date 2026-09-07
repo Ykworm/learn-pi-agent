@@ -128,6 +128,6 @@ Ctrl+C 仍走第 4 片。`interrupted` 会写进 jsonl，翻译时跳过。
 3. `token_usage` 在 jsonl 里。下一轮 HTTP 的 `messages` 里有没有它？
 4. 上一句在 `bash sleep` 时 Ctrl+C，jsonl 末尾是 `interrupted`。`--continue` 之后模型会不会看见一个没有 `tool_result` 的 `tool_calls`？
 
-答得出来再开第 6 片（CLI 三种皮：问一句、交互、`--json`）。卡住就问。
+答得出来再开第 6 片（CLI 三种皮：问一句、交互、`--json`）：[06-cli.md](06-cli.md)。卡住就问。
 
 Go 对照（目录、Gin 勾选继续）：[../go/05-session.md](../go/05-session.md)。

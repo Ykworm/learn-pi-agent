@@ -54,6 +54,9 @@ func (Console) On(event events.Event) {
 	case events.TypeInterrupted:
 		fmt.Println("[interrupted]")
 		fmt.Println()
+	case events.TypeError:
+		fmt.Fprintln(os.Stderr, "[error] "+event.Message)
+		fmt.Println()
 	case events.TypeTokenUsage:
 		// 收到了但不印。SessionManager 会原样写入 jsonl。
 	}

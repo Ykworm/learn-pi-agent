@@ -10,6 +10,7 @@ const (
 	TypeToolResult       = "tool_result"
 	TypeAssistantMessage = "assistant_message"
 	TypeInterrupted      = "interrupted"
+	TypeError            = "error"
 	TypeTokenUsage       = "token_usage"
 	TypeSessionStart     = "session_start"
 )
@@ -24,6 +25,7 @@ type Event struct {
 	Args             string `json:"args,omitempty"`
 	Result           string `json:"result,omitempty"`
 	IsError          *bool  `json:"isError,omitempty"` // 指针：false 也会进 JSON；普通 bool+omitempty 会吞掉成功结果
+	Message          string `json:"message,omitempty"`
 	InputTokens      int    `json:"inputTokens,omitempty"`
 	OutputTokens     int    `json:"outputTokens,omitempty"`
 	TotalTokens      int    `json:"totalTokens,omitempty"`
@@ -77,6 +79,12 @@ func AssistantMessage(text string) Event {
 // 功能作用：构造 interrupted 事件。loop 先 Emit 再返回 ErrInterrupted。
 func Interrupted() Event {
 	return Event{Type: TypeInterrupted}
+}
+
+// Error 为什么存在：--json 协议解析失败、Ask 抛错，要让 Json 听众打成一行 JSON，而不是混进 stderr 把流弄脏。
+// 功能作用：构造 error 事件。CLI 打给 renderer，不经 Emit，所以 jsonl 不记。
+func Error(message string) Event {
+	return Event{Type: TypeError, Message: message}
 }
 
 func TokenUsage(input, output, total, cacheRead, cacheWrite int) Event {

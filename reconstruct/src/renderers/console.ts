@@ -56,6 +56,10 @@ export class ConsoleRenderer implements AgentEventReceiver {
 				console.log("[interrupted]");
 				console.log();
 				break;
+			case "error":
+				console.error(`[error] ${event.message}`);
+				console.log();
+				break;
 			case "token_usage":
 				// 收到了但不印。SessionManager 会原样写入 jsonl。
 				break;

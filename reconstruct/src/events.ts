@@ -22,6 +22,7 @@ export type AgentEvent =
 	| { type: "tool_result"; toolCallId: string; result: string; isError: boolean }
 	| { type: "assistant_message"; text: string } // 终答；ask() 不再 return 这段文本
 	| { type: "interrupted" } // 人取消了这一 turn；不是工具失败
+	| { type: "error"; message: string } // CLI / --json 协议失败；loop 不发；不进 messages
 	| {
 			type: "token_usage";
 			inputTokens: number;

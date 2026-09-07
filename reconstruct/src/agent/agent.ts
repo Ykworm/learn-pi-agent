@@ -33,7 +33,7 @@ export class Agent {
 
 	/**
 	 * 为什么存在：听众是构造时挂上的，不是 loop 里 new Console()。
-	 * 功能作用：rest 参数就是 receivers[]。CLI 传 ConsoleRenderer 和 SessionManager。
+	 * 功能作用：rest 参数就是 receivers[]。CLI 传 renderer 和 SessionManager。
 	 */
 	constructor(config: AgentConfig, ...receivers: AgentEventReceiver[]) {
 		this.model = config.model;

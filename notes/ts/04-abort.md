@@ -4,7 +4,7 @@
 
 看 [`bash.ts`](../../reconstruct/src/tools/bash.ts) 时：解析 `command`、`unknown`、`"command" in parsed`、`as { command: unknown }` 是 [第 3 片](03-tools.md) 第 6 节第 7 条。本片只加了第二参数 `signal`，以及 abort 时 throw `Interrupted`。
 
-对照原文：[`vendor/.../agent.ts`](../../vendor/pi-mono-a74c5da/packages/agent/src/agent.ts) 的 `AbortController` / `interrupt()`，以及 [`tools.ts`](../../vendor/pi-mono-a74c5da/packages/agent/src/tools/tools.ts) 里 bash / rg 看 `signal`。我们不抄 TUI 的 Escape，也不抄 `--json` 的 interrupt 命令。
+对照原文：[`vendor/.../agent.ts`](../../vendor/pi-mono-a74c5da/packages/agent/src/agent.ts) 的 `AbortController` / `interrupt()`，以及 [`tools.ts`](../../vendor/pi-mono-a74c5da/packages/agent/src/tools/tools.ts) 里 bash / rg 看 `signal`。我们不抄 TUI 的 Escape。`--json` 的 `interrupt` 命令是 [第 6 片](06-cli.md)，调的仍是同一个 `interrupt()`。
 
 ## 第 1 节：本片要证明什么
 
@@ -18,7 +18,7 @@
 4. **loop 看见 aborted：`emit` `{ type: "interrupted" }`，再 throw `Interrupted`。** `ask()` 吞掉这个错误，进程正常结束，不是崩溃。
 5. **不要把取消收成 `tool_result` + `isError`。** 那是工具失败。取消是人停这一 turn。
 
-本片 CLI 仍是问一句就退。原文 TUI 用 Escape 调同一个 `interrupt()`；那是第 6 片的皮，不是另一套取消。
+本片 CLI 仍是问一句就退。第 6 片交互和 `--json` 的 `interrupt` 命令调的仍是同一个 `interrupt()`，不是另一套取消。原文 TUI 的 Escape 我们不抄。
 
 ## 第 2 节：谁拿着 controller
 
@@ -79,7 +79,7 @@ HTTP 还在飞的时候 Ctrl+C，SDK 应收 `AbortError`，同样走 `abortTurn`
 
 ## 第 7 节：本片故意没有的
 
-JSONL（[05-session.md](05-session.md)）、Responses、TUI Escape、`--json` 的 interrupt 命令、交互式多轮（一次 Ctrl+C 之后还能再问）。缺了它们，这一 turn 已经能停。
+JSONL（[05-session.md](05-session.md)）、Responses、TUI Escape。`--json` 的 interrupt 和交互式多轮见 [06-cli.md](06-cli.md)。缺了它们，这一 turn 已经能停。
 
 ## 第 8 节：你该能回答的问题
 

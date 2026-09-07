@@ -69,7 +69,7 @@ Cursor 里：F5 选 **Debug reconstruct CLI**，断点打在 [`events.ts`](../..
 
 ## 第 6 节：本片故意没有的
 
-JSONL 落盘见 [05-session.md](05-session.md)。`--json`、Responses、TUI。原文 ConsoleRenderer 的 spinner / chalk 也不抄。缺了它们，总线已经能换听众。`interrupted` 见 [04-abort.md](04-abort.md)。
+JSONL 落盘见 [05-session.md](05-session.md)。`--json` 见 [06-cli.md](06-cli.md)。Responses、TUI。原文 ConsoleRenderer 的 spinner / chalk 也不抄。缺了它们，总线已经能换听众。`interrupted` 见 [04-abort.md](04-abort.md)。
 
 ## 第 7 节：你该能回答的问题
 
