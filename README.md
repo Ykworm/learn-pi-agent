@@ -25,7 +25,7 @@
 
 ## 学习版本
 
-`main` 始终是最新进度。每学完一片打一个 annotated tag，作为可回退的学习版本：
+`main` 始终是最新进度。每学完一片：**先提交，再打 annotated tag，再 push 分支和 tag**，然后才开下一片。步骤写在 [`AGENTS.md`](AGENTS.md) 第「学完一片时」一节。tag 是可回退的学习版本：
 
 | Tag | 含义 |
 |-----|------|
@@ -53,7 +53,7 @@ git checkout -b experiment/slice-00 slice-00
 
 ## 教学节奏
 
-每一片：先讲原理 → 再写一小段带注释的代码 → 讨论 → 你说学会了再开下一片。不要一次把框架写完。
+每一片：先讲原理 → 再写一小段带注释的代码 → 讨论 → 你说学会了 → **提交 + annotated tag + push** → 再开下一片。不要一次把框架写完，也不要在未冻结时写下一片。具体步骤见 [`AGENTS.md`](AGENTS.md) 第「学完一片时」一节。
 
 ## 代码风格（第 1 片起生效）
 
@@ -70,6 +70,6 @@ git checkout -b experiment/slice-00 slice-00
 | 2 | 事件总线（全量 fan-out） | 结束 |
 | 3 | 工具：`read` / `list` / `bash`，再 `glob` / `rg` | 结束 |
 | 4 | `AbortSignal` 中断 | 结束 |
-| 5 | JSONL session，事件还原成 messages | 进行中 |
+| 5 | JSONL session，事件还原成 messages | 结束 |
 | 6 | CLI：单次、交互、`--json` | 未开始 |
 | 7 | 第二条 API：Responses | 未开始 |

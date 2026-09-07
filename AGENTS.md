@@ -47,8 +47,29 @@
 
 JSONL session。SessionManager 是听众，loop 只 `emit`；`--continue` 用 `eventsToMessages` 还原 Completions 的 `messages`。不把 `apiKey` 写进文件。Gin 每个请求仍是新 Agent，跨请求接着问也走同一份 jsonl。
 
+## 学完一片时（git）
+
+对方说「学完了」就是冻结这一片的信号，**不必再问要不要提交**。先冻结，再开下一片。不要把第 N+1 片的代码写进还没打 tag 的工作区（第 3–5 片曾经混在一次提交里，`slice-03` / `slice-04` 没有独立冻结点，不要事后补假 tag）。
+
+顺序：
+
+1. 确认这一片的 TypeScript、Go、笔记都齐，工作区没有下一片的文件。
+2. 提交。不要带 `config.local.json`、`.sessions/`、密钥。
+3. annotated tag：`slice-0N`，说明是第 N 片结束（已有例子：`slice-00` … `slice-02`）。
+4. push 当前分支，**并且** `git push origin slice-0N`。普通 `git push` 不会带上 tag。
+5. 然后才改本文件和 README 的「当前切片」，写下一片笔记和代码。
+
+```bash
+git tag -a slice-05 -m "第 5 片结束：JSONL session，事件还原成 messages"
+git push origin HEAD
+git push origin slice-05
+```
+
+`git checkout slice-0N` 必须能回到**这一片结束时的树**。同一 commit 上挂多个 `slice-*`，回退会骗人，不要打。
+
 ## 不要做的
 
 - 不要把本文件、`AGENTS.md`、项目 README 注入给模型当 system prompt（那是原始 pi 刻意避免的「背后塞上下文」）。
 - 不要提交 `config.local.json`、`.env`、API 密钥。
 - 不要超前写第 6–7 片。
+- 不要在第 N 片未提交、未打 `slice-0N`、未 push 时开始写第 N+1 片。
