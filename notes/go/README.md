@@ -16,4 +16,6 @@
 
 第 7 片第二条 API：[07-responses.md](07-responses.md)
 
+对照课到第 7 片。不写 TUI。Gin 网页仍是 Go 的调试入口。原文网页组件是 [`@earendil-works/pi-web-ui`](../../vendor/pi-web-ui-0.75.3/SNAPSHOT.md)，和 Gin 不是同一套东西。
+
 仓库约定：[AGENTS.md](../../AGENTS.md)。

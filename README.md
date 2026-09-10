@@ -8,24 +8,26 @@
 
 ## 当前进度
 
-**第 7 片：第二条 API（Responses）。** TypeScript：[notes/ts/07-responses.md](notes/ts/07-responses.md)；Go：[notes/go/07-responses.md](notes/go/07-responses.md)。
+**第 7 片已结束：第二条 API（Responses）。** TypeScript：[notes/ts/07-responses.md](notes/ts/07-responses.md)；Go：[notes/go/07-responses.md](notes/go/07-responses.md)。
+
+原文还有 TUI，本仓库**不做**。之后盯 Agent 本身（loop、工具、事件、session、两条信封）。CLI 无参数仍是 readline；偏好的交互调试是 Go 的 Gin 网页：`go run ./cmd/server`。
 
 ## 目录
 
 | 路径 | 作用 |
 |------|------|
-| [`vendor/`](vendor/README.md) | 冻结的原文快照，只读 |
-| [`AGENTS.md`](AGENTS.md) | 给写代码的人：双端对齐、注释、当前切片范围 |
+| [`vendor/`](vendor/README.md) | 冻结的原文快照，只读：首个提交 agent；网页包第一版；官方 `@earendil-works/pi-web-ui@0.75.3`；今天的 pi `v0.85.1` |
+| [`AGENTS.md`](AGENTS.md) | 给写代码的人：双端对齐、注释、禁止 TUI、盯 Agent |
 | [`notes/ts/`](notes/ts/README.md) | TypeScript 笔记（含第 0 片概念） |
 | [`notes/go/`](notes/go/README.md) | Go 笔记（实现差异、Gin、断点） |
 | [`reconstruct/`](reconstruct/README.md) | TypeScript：loop + 五个工作区工具 + 事件 + AbortSignal + JSONL session + CLI 三种皮 + Completions / Responses |
-| [`reconstruct-go/`](reconstruct-go/README.md) | Go：同上 + 可选 Gin 网页（可看事件列表；勾选继续走同一份 jsonl） |
+| [`reconstruct-go/`](reconstruct-go/README.md) | Go：同上 + Gin 网页（可看事件列表；勾选继续走同一份 jsonl） |
 
-本阶段只读 `vendor/pi-mono-a74c5da/packages/agent/`。不读 TUI，不读 pods。
+对照课读 `vendor/pi-mono-a74c5da/packages/agent/`。不读 TUI，不读 pods。网页组件对照 `vendor/pi-web-ui-0.75.3/`（官方 `@earendil-works/pi-web-ui`），课还没开，不要抄进 reconstruct。
 
 ## 学习版本
 
-`main` 始终是最新进度。每学完一片：**先提交，再打 annotated tag，再 push 分支和 tag**，然后才开下一片。步骤写在 [`AGENTS.md`](AGENTS.md) 第「学完一片时」一节。tag 是可回退的学习版本：
+`main` 始终是最新进度。对照课每学完一片：**先提交，再打 annotated tag，再 push 分支和 tag**。步骤写在 [`AGENTS.md`](AGENTS.md) 第「学完一片时」一节。tag 是可回退的学习版本：
 
 | Tag | 含义 |
 |-----|------|
@@ -53,13 +55,14 @@ git checkout -b experiment/slice-00 slice-00
 
 ## 教学节奏
 
-每一片：先讲原理 → 再写一小段带注释的代码 → 讨论 → 你说学会了 → **提交 + annotated tag + push** → 再开下一片。不要一次把框架写完，也不要在未冻结时写下一片。具体步骤见 [`AGENTS.md`](AGENTS.md) 第「学完一片时」一节。
+对照课到第 7 片：先讲原理 → 再写一小段带注释的代码 → 讨论 → 你说学会了 → **提交 + annotated tag + push**。不要一次把框架写完。之后改 Agent 仍双端一起改，不要开 TUI 片。具体步骤见 [`AGENTS.md`](AGENTS.md) 第「学完一片时」一节。
 
 ## 代码风格（第 1 片起生效）
 
 - 注释写两句中文：为什么存在、功能作用。不复述语法。
 - 按职责拆文件，一个文件一件主事。util 只放两处以上真正共用的函数。
 - 力求精简。截断、abort、窄扩展点可以写；不要为假想需求堆抽象。
+- 禁止 TUI。交互调试用网页或 CLI 三种皮。
 
 ## 切片
 
@@ -72,4 +75,5 @@ git checkout -b experiment/slice-00 slice-00
 | 4 | `AbortSignal` 中断 | 结束 |
 | 5 | JSONL session，事件还原成 messages | 结束 |
 | 6 | CLI：单次、交互、`--json` | 结束 |
-| 7 | 第二条 API：Responses | 进行中 |
+| 7 | 第二条 API：Responses | 结束 |
+| 8 | 原文 TUI | 不做 |

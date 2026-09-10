@@ -1,6 +1,6 @@
 # reconstruct-go
 
-第 7 片 Go 对照：同一套 Completions / Responses loop + 五个工作区工具 + 事件总线 + 可 cancel 的 `ctx` + JSONL session + CLI 三种皮 + `--api`。日常用命令行；调试 Gin 时网页一次返回事件列表，勾选继续走 jsonl。
+第 7 片 Go 对照：同一套 Completions / Responses loop + 五个工作区工具 + 事件总线 + 可 cancel 的 `ctx` + JSONL session + CLI 三种皮 + `--api`。单次和 `--json` 用命令行；偏好的交互调试是 Gin 网页（一次返回事件列表，勾选继续走 jsonl）。不写 TUI。
 
 ```bash
 cd reconstruct-go

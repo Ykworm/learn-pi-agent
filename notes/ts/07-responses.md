@@ -97,6 +97,6 @@ TUI、`previous_response_id`（服务端替你记会话）、把 `reasoning.effo
 3. `thinking` 会不会进 Completions 的 `messages`？会不会进 Responses 的 `input`？jsonl 里有没有它？
 4. `--continue` 一份第 6 片留下的、头里没有 `api` 的 jsonl，会走哪条 loop？
 
-答得出来这一片就结束了。卡住就问。不要自己先写 TUI。
+答得出来这一片就结束了。对照原文的 API / loop / 三种 CLI 皮这条线停在这里。原文还有 TUI，本仓库不做。卡住就问。之后盯 Agent 本身；浏览器调试见 Go 的 `go run ./cmd/server`。
 
 Go 对照（SDK union、`instructions`、Gin 读 `config.api`）：[../go/07-responses.md](../go/07-responses.md)。

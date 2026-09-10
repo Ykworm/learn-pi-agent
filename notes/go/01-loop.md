@@ -17,7 +17,7 @@ go run ./cmd/cli "请用 echo 工具重复：hello"
 
 F5 选 **Debug reconstruct-go CLI**，会立刻进 `Ask` / loop，不必再发 HTTP。
 
-Gin 还在：给「服务器 + 浏览器」调试用，不是日常提问方式。
+Gin 是偏好的交互调试面（相对自绘终端）。CLI 仍用于单次和 `--json`。网页一次 POST 一句，loop 不变。
 
 | TS | Go |
 |----|----|

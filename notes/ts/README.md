@@ -19,4 +19,16 @@
 
 第 7 片第二条 API：[07-responses.md](07-responses.md)
 
+对照课到第 7 片。不写 TUI。之后盯 Agent。网页先对照官方 [`@earendil-works/pi-web-ui@0.75.3`](../../vendor/pi-web-ui-0.75.3/SNAPSHOT.md)，不要先在 reconstruct 里写一版。
+
+一年后的产品（只读对照，不是下一片课）：
+
+- 组件怎么长出来的（先读这篇）：[pi-growth.md](pi-growth.md)
+- 分层图：[pi-v0.85.1-layers.md](pi-v0.85.1-layers.md)
+- Event、Message、jsonl 条目：[pi-messages.md](pi-messages.md)
+- JSONL RPC 和 SSE 的电线对照：[demos/jsonl-rpc-vs-sse/](demos/jsonl-rpc-vs-sse/README.md)
+- Compaction 流程：[pi-compaction.md](pi-compaction.md)
+- 会话树，/tree 和 /fork 归谁管：[pi-sessions.md](pi-sessions.md)
+- demo 与 v0.85.1 的逐项差距表：[pi-gap.md](pi-gap.md)
+
 仓库约定：[AGENTS.md](../../AGENTS.md)。Go 笔记：[../go/](../go/)。

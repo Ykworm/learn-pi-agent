@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 1048" width="840" height="1048" role="img" aria-labelledby="title desc">
+  <title id="title">pi v0.85.1 组件分层</title>
+  <desc id="desc">调用从上往下：L1 皮（只换听众）→ createAgentSession 工厂 → L2 产品壳 → L3 Agent 运行时 → L4 模型 I/O → L5 宿主。枢纽是 L2 的 AgentSession。事件从下往上 subscribe。皮不跑 loop。工厂不是皮。</desc>
+  <defs>
+    <style>
+      .bg { fill: #f6f5f1; }
+      .title { font: 700 22px ui-sans-serif, system-ui, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #1a1a1a; }
+      .sub { font: 400 12px ui-sans-serif, system-ui, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #5c5c5c; }
+      .layer { fill: #fff; stroke: #d4d0c8; stroke-width: 1.5; }
+      .layer-hub { fill: #fff; stroke: #2f6fed; stroke-width: 2.5; }
+      .ln { font: 700 11px ui-sans-serif, system-ui, sans-serif; fill: #fff; }
+      .lt { font: 700 15px ui-sans-serif, system-ui, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #1a1a1a; }
+      .lp { font: 400 11px ui-sans-serif, system-ui, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #6b6b6b; }
+      .pill { fill: #eef1f6; stroke: #d8dde6; stroke-width: 1; }
+      .pill-door { fill: #e8f0ff; stroke: #2f6fed; stroke-width: 1.6; }
+      .pillt { font: 500 11px ui-sans-serif, system-ui, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #2a2a2a; }
+      .badge { fill: #3d3d3d; }
+      .badge-hub { fill: #2f6fed; }
+      .arrow { fill: none; stroke: #8a8a8a; stroke-width: 1.6; marker-end: url(#ah); }
+      .foot { font: 400 11px ui-sans-serif, system-ui, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #6b6b6b; }
+    </style>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="840" height="1048"/>
+  <text class="title" x="32" y="42">pi v0.85.1 组件分层</text>
+  <text class="sub" x="32" y="64">调用从上往下；事件从下往上 subscribe。皮不跑 loop。枢纽是 L2 的 AgentSession，不是 TUI</text>
+
+  <!-- L1 -->
+  <rect class="layer" x="28" y="88" width="784" height="148" rx="10"/>
+  <rect class="badge" x="44" y="104" width="32" height="20" rx="4"/>
+  <text class="ln" x="60" y="118" text-anchor="middle">L1</text>
+  <text class="lt" x="86" y="119">皮（听众）</text>
+  <text class="lp" x="200" y="119">pi-coding-agent/modes + pi-tui · 只换输入和 subscribe，不组装产品壳</text>
+  <g transform="translate(44,140)">
+    <rect class="pill" width="176" height="72" rx="8"/>
+    <text class="pillt" x="88" y="32" text-anchor="middle">InteractiveMode</text>
+    <text class="pillt" x="88" y="50" text-anchor="middle">+ pi-tui</text>
+    <rect class="pill" x="188" width="176" height="72" rx="8"/>
+    <text class="pillt" x="276" y="32" text-anchor="middle">Print / JSON</text>
+    <text class="pillt" x="276" y="50" text-anchor="middle">pi -p · --mode json</text>
+    <rect class="pill" x="376" width="176" height="72" rx="8"/>
+    <text class="pillt" x="464" y="32" text-anchor="middle">RPC JSONL</text>
+    <text class="pillt" x="464" y="50" text-anchor="middle">stdin / stdout</text>
+    <rect class="pill" x="564" width="188" height="72" rx="8"/>
+    <text class="pillt" x="658" y="32" text-anchor="middle">嵌入方</text>
+    <text class="pillt" x="658" y="50" text-anchor="middle">同进程 subscribe</text>
+  </g>
+
+  <path class="arrow" d="M420 244 L420 260"/>
+
+  <!-- 工厂：进 L2 的门，不是第五层、也不是皮 -->
+  <rect class="pill-door" x="168" y="260" width="504" height="52" rx="8"/>
+  <text class="pillt" x="420" y="281" text-anchor="middle">createAgentSession() 组装 AgentSession</text>
+  <text class="pillt" x="420" y="299" text-anchor="middle">三种 CLI 皮和嵌入方都走它 · 不是皮</text>
+
+  <path class="arrow" d="M420 312 L420 328"/>
+
+  <!-- L2 -->
+  <rect class="layer-hub" x="28" y="336" width="784" height="196" rx="10"/>
+  <rect class="badge-hub" x="44" y="352" width="32" height="20" rx="4"/>
+  <text class="ln" x="60" y="366" text-anchor="middle">L2</text>
+  <text class="lt" x="86" y="367">产品壳</text>
+  <text class="lp" x="232" y="367">@earendil-works/pi-coding-agent · 枢纽是 AgentSession</text>
+  <g transform="translate(44,388)">
+    <rect class="pill" width="240" height="56" rx="8"/>
+    <text class="pillt" x="120" y="34" text-anchor="middle">AgentSession</text>
+    <rect class="pill" x="252" width="240" height="56" rx="8"/>
+    <text class="pillt" x="372" y="34" text-anchor="middle">ExtensionRunner / Skills / Templates</text>
+    <rect class="pill" x="504" width="240" height="56" rx="8"/>
+    <text class="pillt" x="624" y="34" text-anchor="middle">SessionManager 分支 · jsonl</text>
+    <rect class="pill" y="68" width="240" height="56" rx="8"/>
+    <text class="pillt" x="120" y="102" text-anchor="middle">Compaction</text>
+    <rect class="pill" x="252" y="68" width="240" height="56" rx="8"/>
+    <text class="pillt" x="372" y="102" text-anchor="middle">ModelRuntime / Auth</text>
+    <rect class="pill" x="504" y="68" width="240" height="56" rx="8"/>
+    <text class="pillt" x="624" y="102" text-anchor="middle">read · bash · edit · write</text>
+  </g>
+
+  <path class="arrow" d="M420 540 L420 556"/>
+
+  <!-- L3 -->
+  <rect class="layer" x="28" y="564" width="784" height="132" rx="10"/>
+  <rect class="badge" x="44" y="580" width="32" height="20" rx="4"/>
+  <text class="ln" x="60" y="594" text-anchor="middle">L3</text>
+  <text class="lt" x="86" y="595">Agent 运行时</text>
+  <text class="lp" x="214" y="595">@earendil-works/pi-agent-core · prompt 开 turn；有 tool 再请求</text>
+  <g transform="translate(44,616)">
+    <rect class="pill" width="176" height="56" rx="8"/>
+    <text class="pillt" x="88" y="34" text-anchor="middle">Agent.prompt / subscribe</text>
+    <rect class="pill" x="188" width="176" height="56" rx="8"/>
+    <text class="pillt" x="276" y="34" text-anchor="middle">agent-loop</text>
+    <rect class="pill" x="376" width="176" height="56" rx="8"/>
+    <text class="pillt" x="464" y="34" text-anchor="middle">convertToLlm</text>
+    <rect class="pill" x="564" width="188" height="56" rx="8"/>
+    <text class="pillt" x="658" y="34" text-anchor="middle">state.messages</text>
+  </g>
+
+  <path class="arrow" d="M420 704 L420 720"/>
+
+  <!-- L4 -->
+  <rect class="layer" x="28" y="728" width="784" height="112" rx="10"/>
+  <rect class="badge" x="44" y="744" width="32" height="20" rx="4"/>
+  <text class="ln" x="60" y="758" text-anchor="middle">L4</text>
+  <text class="lt" x="86" y="759">模型 I/O</text>
+  <text class="lp" x="176" y="759">@earendil-works/pi-ai · 通用 Message 变成供应商 HTTP 流</text>
+  <g transform="translate(44,780)">
+    <rect class="pill" width="236" height="40" rx="8"/>
+    <text class="pillt" x="118" y="26" text-anchor="middle">streamSimple</text>
+    <rect class="pill" x="252" width="236" height="40" rx="8"/>
+    <text class="pillt" x="370" y="26" text-anchor="middle">Completions / Responses / …</text>
+    <rect class="pill" x="504" width="240" height="40" rx="8"/>
+    <text class="pillt" x="624" y="26" text-anchor="middle">OAuth · 模型目录</text>
+  </g>
+
+  <path class="arrow" d="M420 848 L420 864"/>
+
+  <!-- L5 -->
+  <rect class="layer" x="28" y="872" width="784" height="96" rx="10"/>
+  <rect class="badge" x="44" y="888" width="32" height="20" rx="4"/>
+  <text class="ln" x="60" y="902" text-anchor="middle">L5</text>
+  <text class="lt" x="86" y="903">宿主</text>
+  <text class="lp" x="148" y="903">磁盘 / OS + 供应商 HTTPS · 出了 JS 进程边界</text>
+  <g transform="translate(44,924)">
+    <rect class="pill" width="236" height="28" rx="8"/>
+    <text class="pillt" x="118" y="19" text-anchor="middle">工作区文件</text>
+    <rect class="pill" x="252" width="236" height="28" rx="8"/>
+    <text class="pillt" x="370" y="19" text-anchor="middle">bash / PowerShell</text>
+    <rect class="pill" x="504" width="240" height="28" rx="8"/>
+    <text class="pillt" x="624" y="19" text-anchor="middle">供应商 HTTP / SSE</text>
+  </g>
+
+  <text class="foot" x="32" y="1028">对照 vendor/pi-v0.85.1 · tag v0.85.1 · 实验 Unix socket + CBOR 不进这五层</text>
+</svg>
