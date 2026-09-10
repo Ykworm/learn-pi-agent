@@ -1,3 +1,8 @@
 {
-  "apiKey": "sk-你的DeepSeek密钥"
+  "completions": {
+    "apiKey": "sk-你的DeepSeek密钥"
+  },
+  "responses": {
+    "apiKey": "sk-你的OpenAI密钥"
+  }
 }
